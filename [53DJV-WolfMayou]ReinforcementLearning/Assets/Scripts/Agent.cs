@@ -11,7 +11,7 @@ public class Agent : MonoBehaviour
     [SerializeField] private GridWorldController gridWorldController;
     private List<State> allStates;
     
-    public void Initialize()
+    public void InitializePolicyIteration()
     {
         allStates = new List<State>();
         for (int i = 0; i < gridWorldController.grid.gridHeight; ++i)
@@ -33,7 +33,7 @@ public class Agent : MonoBehaviour
             currentState.statePolicy = wantedIntent;
         }
     }
-
+    
     public void PolicyEvaluation()
     {
         float delta;
@@ -56,7 +56,7 @@ public class Agent : MonoBehaviour
         } while (delta >= theta);
     }
 
-    public void PublicyImprovement()
+    public void PolicyImprovement()
     {
         bool policyStable = true;
         foreach (var currentState in allStates)
@@ -112,7 +112,54 @@ public class Agent : MonoBehaviour
         }
         return bestIntent;
     }
-    
+
+    public float GetBestValue(State currentState)
+    {
+        List<State> possibleStates = new List<State>();
+        float max = float.MinValue;
+        for (int i = 0; i < 4; ++i)
+        {
+            if (CheckIntent(currentState, (Intents) i))
+            {
+                State tempState = GetNextState(currentState, (Intents) i);
+                possibleStates.Add(tempState);
+                if ( tempState.stateValue > max)
+                {
+                    max = tempState.stateValue;
+                }
+            }
+        }
+        return max;
+    }
+
+    public void ValueIteration()
+    {
+        float delta;
+        float theta = 0.01f;
+        float gamma = 0.7f;
+        allStates = new List<State>();
+        for (int i = 0; i < gridWorldController.grid.gridHeight; ++i)
+        {
+            for (int j = 0; j < gridWorldController.grid.gridWidth; ++j)
+            {
+                State currentState = new State();
+                currentState.stateValue = 0;
+            }
+        }
+
+        do
+        {
+            delta = 0;
+            foreach (var currentState in allStates)
+            {
+                float temp = currentState.stateValue;
+                currentState.stateValue = GetBestValue(currentState);
+                delta = Mathf.Max(delta, Mathf.Abs(temp - currentState.stateValue));
+            }
+        } while(delta >= theta);
+        
+        //IL MANQUE PI DE S C CHLOU WESH
+    }
     public State GetNextState(State currentState, Intents intent)
     {
         Vector3 nextPlayerPos = Vector3.zero;
