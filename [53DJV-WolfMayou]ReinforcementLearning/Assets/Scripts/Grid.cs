@@ -42,19 +42,37 @@ public class Grid : MonoBehaviour
 
         for (int i = 0; i < gridHeight; ++i)
         {
-            Debug.Log("iai " + i);
+            
             grid[i] = new Cell[gridWidth];
             for (int j = 0; j < gridWidth; ++j)
             {
-                Debug.Log("yay " + j);
+                
                 grid[i][j] = new Cell();
-                Debug.Log("yay1 " + j);
+                
                 grid[i][j].cellObject = Instantiate(gridPrefab,new Vector3(j,0,i),Quaternion.identity);
-                Debug.Log("yay2 " + j);
-                grid[i][j].type = (Cell.CellType)Random.Range(0, 3);
-                Debug.Log("yay3 " + j);
+                
+                float rdm = Random.Range(0.0f, 1.0f);
+                if (rdm < 0.8f)
+                {
+                    grid[i][j].type = Cell.CellType.Empty;
+                }
+                else
+                {
+                    if ((i > 0 && j > 0 && j < gridWidth - 1) && (grid[i - 1][j].type == Cell.CellType.Obstacle ||
+                        grid[i - 1][j - 1].type == Cell.CellType.Obstacle ||
+                        grid[i][j - 1].type == Cell.CellType.Obstacle ||
+                        grid[i - 1][j + 1].type == Cell.CellType.Obstacle))
+                    {
+                        grid[i][j].type = Cell.CellType.Hole;
+                    }
+                    else
+                    {
+                        grid[i][j].type = Cell.CellType.Obstacle;
+                    }
+                }
+                
                 grid[i][j].cellObject.GetComponent<MeshRenderer>().material = gridMaterials[(int)grid[i][j].type];
-                Debug.Log("yay4 " + j);
+                
             }
         }
 
