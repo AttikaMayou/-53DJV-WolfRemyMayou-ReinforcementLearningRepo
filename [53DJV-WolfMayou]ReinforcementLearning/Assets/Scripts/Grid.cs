@@ -16,11 +16,13 @@ public class Grid : MonoBehaviour
     [SerializeField] private GameType type;
     public Cell[][] grid;
 
-    [SerializeField] private int gridWidth;
-    [SerializeField] private int gridHeight;
+    [SerializeField] public int gridWidth;
+    [SerializeField] public int gridHeight;
     [SerializeField] private GameObject gridPrefab;
-    [SerializeField] private List<Material> gridMaterials; 
-    private void Start()
+    [SerializeField] private List<Material> gridMaterials;
+
+    public Vector3 startPos;
+    /*private void Start()
     {
         switch (type)
         {
@@ -32,9 +34,9 @@ public class Grid : MonoBehaviour
             case GameType.Sokoban:
                 break;
         }
-    }
+    }*/
 
-    private void InitGridWorld()
+    public void InitGridWorld()
     {
         grid = new Cell[gridHeight][];
         bool startDone;
@@ -80,6 +82,7 @@ public class Grid : MonoBehaviour
         int endX, endY;
         startX = Random.Range(0, gridWidth);
         startY = Random.Range(0, gridHeight);
+        startPos = new Vector3(startY,0.5f,startX);
         do
         {
             endX = Random.Range(0, gridWidth);
