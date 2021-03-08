@@ -22,6 +22,7 @@ public class Grid : MonoBehaviour
     [SerializeField] private List<Material> gridMaterials;
 
     public Vector3 startPos;
+    public Vector3 endPos;
     /*private void Start()
     {
         switch (type)
@@ -89,6 +90,7 @@ public class Grid : MonoBehaviour
             endY = Random.Range(0, gridHeight);
         } while (endX == startX && endY == startY);
 
+        endPos = new Vector3(endY,0.5f,endX);
         grid[startX][startY].type = Cell.CellType.Start;
         grid[startX][startY].cellObject.GetComponent<MeshRenderer>().material = gridMaterials[(int)Cell.CellType.Start];
         grid[endX][endY].type = Cell.CellType.End;
