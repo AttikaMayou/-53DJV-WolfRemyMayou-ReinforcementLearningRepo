@@ -153,10 +153,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 0
-  gridWidth: 0
-  gridHeight: 0
-  gridPrefab: {fileID: 0}
-  gridMaterials: []
+  gridWidth: 4
+  gridHeight: 4
+  gridPrefab: {fileID: 8617325152571129655, guid: a5b8c54c4c1fb094699202653b9029d0, type: 3}
+  gridMaterials:
+  - {fileID: 2100000, guid: 022bed50dcdddfb47b806b69420fa848, type: 2}
+  - {fileID: 2100000, guid: 1d865939c2738dd4b93cc292aa52f92a, type: 2}
+  - {fileID: 2100000, guid: 48828c7aa524d75428d0173355498bdb, type: 2}
+  - {fileID: 2100000, guid: dccc77927f322454d8d50325509978b9, type: 2}
+  - {fileID: 2100000, guid: 36246dcf355e1384b820cba1c73cb5a6, type: 2}
 --- !u!4 &616517327
 Transform:
   m_ObjectHideFlags: 0
