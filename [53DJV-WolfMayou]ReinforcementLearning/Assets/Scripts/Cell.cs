@@ -7,7 +7,6 @@ public class Cell
     public enum CellType
     {
         Empty,
-        Player,
         Obstacle,
         Hole,
         Start,
