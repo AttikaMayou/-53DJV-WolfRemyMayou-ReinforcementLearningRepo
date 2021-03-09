@@ -157,8 +157,11 @@ public class Agent : MonoBehaviour
                 delta = Mathf.Max(delta, Mathf.Abs(temp - currentState.stateValue));
             }
         } while(delta >= theta);
-        
-        //IL MANQUE PI DE S C CHLOU WESH
+
+        foreach (var currentState in allStates)
+        {
+            currentState.statePolicy = GetBestIntent(currentState);
+        }
     }
     public State GetNextState(State currentState, Intents intent)
     {
