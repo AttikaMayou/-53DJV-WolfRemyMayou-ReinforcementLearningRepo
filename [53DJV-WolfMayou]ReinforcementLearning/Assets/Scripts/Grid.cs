@@ -27,28 +27,20 @@ public class Grid : MonoBehaviour
     public GameObject rightArrow;
 
     [SerializeField] public GameObject valueObject;
+    [SerializeField] private DebuggerManager debuggerManager;
 
     public Vector3 startPos;
     public Vector3 endPos;
-    /*private void Start()
-    {
-        switch (type)
-        {
-            case GameType.GridWorld:
-                InitGridWorld();
-                break;
-            case GameType.TicTacToe:
-                break;
-            case GameType.Sokoban:
-                break;
-        }
-    }*/
 
     public void InitGridWorld()
     {
+        debuggerManager.ClearIntents();
+        foreach (Transform child in this.transform)
+        {
+            Destroy(child.gameObject);
+        }
+        
         grid = new Cell[gridHeight][];
-        bool startDone;
-        bool endDone;
 
         for (int i = 0; i < gridHeight; ++i)
         {
@@ -60,6 +52,7 @@ public class Grid : MonoBehaviour
                 grid[i][j] = new Cell();
                 
                 grid[i][j].cellObject = Instantiate(gridPrefab,new Vector3(i,0,j),Quaternion.identity);
+                grid[i][j].cellObject.transform.SetParent(this.transform);
                 
                 float rdm = Random.Range(0.0f, 1.0f);
                 if (rdm < 0.8f)

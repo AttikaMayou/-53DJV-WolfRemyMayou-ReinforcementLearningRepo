@@ -8,6 +8,7 @@ public class Agent : MonoBehaviour
 {
     [SerializeField] private GridWorldController gridWorldController;
     private List<State> allStates;
+    [SerializeField] private DebuggerManager debugIntentParent;
 
     public void LaunchAgent()
     {
@@ -161,8 +162,6 @@ public class Agent : MonoBehaviour
             if (CheckIntent(currentState, (Intents) i))
             {
                 State tempState = GetNextState(currentState, (Intents) i);
-                
-                Debug.Log("stateValue : "+tempState.stateValue);
                 if ( tempState.stateValue > max)
                 {
                     max = tempState.stateValue;
@@ -183,7 +182,6 @@ public class Agent : MonoBehaviour
             if (CheckIntent(currentState, (Intents) i))
             {
                 State tempState = GetNextState(currentState, (Intents) i);
-                Debug.Log("stateValue : "+tempState.stateValue);
                 if ( tempState.stateValue > max)
                 {
                     max = tempState.stateValue;
@@ -249,10 +247,8 @@ public class Agent : MonoBehaviour
 
     public State GetStateFromPos(Vector3 pos)
     {
-        //Debug.Log("getstate");
         foreach (var state in allStates)
         {
-            //Debug.Log(state.currentPlayerPos + " " + pos);
             if (state.currentPlayerPos == pos)
             {
                 //Debug.Log("found");
@@ -271,12 +267,10 @@ public class Agent : MonoBehaviour
     {
         if (GetNextState(currentState, wantedIntent) == null)
         {
-            //Debug.Log("pb de next state");
             return false;
         }
         if (GetCellType(GetNextState(currentState, wantedIntent).currentPlayerPos) == Cell.CellType.Obstacle)
         {
-            //Debug.Log("obstacle");
             return false;
         }
         return true;
@@ -284,27 +278,35 @@ public class Agent : MonoBehaviour
 
     public void DebugIntents()
     {
+        debugIntentParent.ClearIntents();
+
         foreach (var state in allStates)
         {
+            GameObject arrow;
             switch (state.statePolicy)
             {
                 case Intents.Down:
-                    Instantiate(gridWorldController.grid.downArrow, state.currentPlayerPos, Quaternion.identity);
+                    arrow = Instantiate(gridWorldController.grid.downArrow, state.currentPlayerPos, Quaternion.identity);
+                    arrow.transform.SetParent(debugIntentParent.transform);
                     break;
                 case Intents.Up:
-                    Instantiate(gridWorldController.grid.upArrow, state.currentPlayerPos, Quaternion.identity);
+                    arrow = Instantiate(gridWorldController.grid.upArrow, state.currentPlayerPos, Quaternion.identity);
+                    arrow.transform.SetParent(debugIntentParent.transform);
                     break;
                 case Intents.Left:
-                    Instantiate(gridWorldController.grid.leftArrow, state.currentPlayerPos, Quaternion.identity);
+                    arrow = Instantiate(gridWorldController.grid.leftArrow, state.currentPlayerPos, Quaternion.identity);
+                    arrow.transform.SetParent(debugIntentParent.transform);
                     break;
                 case Intents.Right:
-                    Instantiate(gridWorldController.grid.rightArrow, state.currentPlayerPos,
+                    arrow = Instantiate(gridWorldController.grid.rightArrow, state.currentPlayerPos,
                         Quaternion.identity);
+                    arrow.transform.SetParent(debugIntentParent.transform);
                     break;
             }
-
+            
             GameObject valueText = Instantiate(gridWorldController.grid.valueObject, state.currentPlayerPos + Vector3.up, Quaternion.Euler(90,0,0));
             valueText.GetComponent<TextMesh>().text = (Mathf.Floor(state.stateValue*100)/100).ToString();
+            valueText.transform.SetParent(debugIntentParent.transform);
         }
     }
 }
