@@ -13,6 +13,14 @@ public class Cell
         End
     }
 
+    public enum State
+    {
+        NEUTRAL = -1,
+        CROSS = 0,
+        CIRCLE = 1
+    }
+    public State state;
+
     public CellType type;
     public GameObject cellObject;
 }
