@@ -18,8 +18,9 @@ public class Agent : MonoBehaviour
         {
             PolicyImprovement();
         }
+        DebugIntents();
         Debug.Log("endImprovement");
-        /*int iter = 0;
+        int iter = 0;
         while (gridWorldController.player.transform.position != gridWorldController.grid.endPos)
         {
             Debug.Log(gridWorldController.player.transform.position);
@@ -47,7 +48,7 @@ public class Agent : MonoBehaviour
                 break;
             }
         }
-        Debug.Log("End");*/
+        Debug.Log("End");
     }
     
     public void InitializePolicyIteration()
@@ -69,23 +70,6 @@ public class Agent : MonoBehaviour
         foreach (var currentState in allStates)
         {
             Intents wantedIntent= (Intents) Random.Range(0, 3);
-            switch (wantedIntent)
-            {
-                case Intents.Down:
-                    Instantiate(gridWorldController.grid.downArrow, currentState.currentPlayerPos, Quaternion.identity);
-                    break;
-                case Intents.Up:
-                    Instantiate(gridWorldController.grid.upArrow, currentState.currentPlayerPos, Quaternion.identity);
-                    break;
-                case Intents.Left:
-                    Instantiate(gridWorldController.grid.leftArrow, currentState.currentPlayerPos, Quaternion.identity);
-                    break;
-                case Intents.Right:
-                    Instantiate(gridWorldController.grid.rightArrow, currentState.currentPlayerPos, Quaternion.identity);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
             currentState.statePolicy = wantedIntent;
         }
     }
@@ -274,5 +258,28 @@ public class Agent : MonoBehaviour
             return false;
         }
         return true;
+    }
+
+    public void DebugIntents()
+    {
+        foreach (var state in allStates)
+        {
+            switch (state.statePolicy)
+            {
+                case Intents.Down:
+                    Instantiate(gridWorldController.grid.downArrow, state.currentPlayerPos, Quaternion.identity);
+                    break;
+                case Intents.Up:
+                    Instantiate(gridWorldController.grid.upArrow, state.currentPlayerPos, Quaternion.identity);
+                    break;
+                case Intents.Left:
+                    Instantiate(gridWorldController.grid.leftArrow, state.currentPlayerPos, Quaternion.identity);
+                    break;
+                case Intents.Right:
+                    Instantiate(gridWorldController.grid.rightArrow, state.currentPlayerPos,
+                        Quaternion.identity);
+                    break;
+            }
+        }
     }
 }
