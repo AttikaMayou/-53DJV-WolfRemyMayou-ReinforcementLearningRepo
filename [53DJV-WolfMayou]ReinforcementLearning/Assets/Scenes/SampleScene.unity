@@ -164,6 +164,7 @@ MonoBehaviour:
   - {fileID: 2100000, guid: dccc77927f322454d8d50325509978b9, type: 2}
   - {fileID: 2100000, guid: 36246dcf355e1384b820cba1c73cb5a6, type: 2}
   startPos: {x: 0, y: 0, z: 0}
+  endPos: {x: 0, y: 0, z: 0}
 --- !u!4 &616517327
 Transform:
   m_ObjectHideFlags: 0
