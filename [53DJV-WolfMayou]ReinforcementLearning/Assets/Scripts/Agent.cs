@@ -10,9 +10,47 @@ public class Agent : MonoBehaviour
 {
     [SerializeField] private GridWorldController gridWorldController;
     private List<State> allStates;
+
+    public void LaunchAgent()
+    {
+        //with policy iteration
+        InitializePolicyIteration();
+        for (int i = 0; i < 10; ++i)
+        {
+            PolicyImprovement();
+        }
+
+        int iter = 0;
+        while (gridWorldController.player.transform.position != gridWorldController.grid.endPos)
+        {
+            State currentState = GetStateFromPos(gridWorldController.player.transform.position);
+            switch (currentState.statePolicy)
+            {
+                case Intents.Down:
+                    gridWorldController.DownIntent();
+                    break;
+                case Intents.Up:
+                    gridWorldController.UpIntent();
+                    break;
+                case Intents.Left:
+                    gridWorldController.LeftIntent();
+                    break;
+                case Intents.Right:
+                    gridWorldController.RightIntent();
+                    break;
+            }
+            ++iter;
+            if (iter > 1000)
+            {
+                break;
+            }
+        }
+        Debug.Log("End");
+    }
     
     public void InitializePolicyIteration()
     {
+        Debug.Log("Initialization");
         allStates = new List<State>();
         for (int i = 0; i < gridWorldController.grid.gridHeight; ++i)
         {
@@ -20,6 +58,8 @@ public class Agent : MonoBehaviour
             {
                 State currentState = new State();
                 currentState.stateValue = Random.Range(-100.0f, 100.0f);
+                currentState.currentPlayerPos = new Vector3(i, 0, j);
+                allStates.Add(currentState);
             }
         }
 
@@ -29,7 +69,7 @@ public class Agent : MonoBehaviour
             do
             {
                 wantedIntent = (Intents) Random.Range(0, 3);
-            } while (!CheckIntent(currentState,wantedIntent));
+            } while (!CheckIntent(currentState, wantedIntent));
             currentState.statePolicy = wantedIntent;
         }
     }
