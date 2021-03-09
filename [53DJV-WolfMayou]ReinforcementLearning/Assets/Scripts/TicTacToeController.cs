@@ -69,18 +69,33 @@ public class TicTacToeController : MonoBehaviour
         }
     }
 
-    private void Place(GameObject gameObject, Vector3 position, Material team, Cell.State state)
+    private bool gridIsEmpty(Vector3 position)
     {
         int x = (int)position.x;
         int z = (int)position.z;
-        // Instantiate Team GameObject
-        Instantiate(gameObject, position, transform.rotation * Quaternion.Euler(90f, 0f, 0f));
-        // Change Grid Material
-        grid.grid[z][x].cellObject.GetComponent<MeshRenderer>().material = team;
-        // Set Cell State
-        grid.grid[z][x].state = state;
-        //Debug.Log("Set State : " + grid.grid[x][z].state);
-        CheckVictory();
+        if (grid.grid[z][x].state == Cell.State.NEUTRAL)
+        {
+            return true;
+        }
+        Debug.Log("Place prise");
+        return false;
+    }
+
+    private void Place(GameObject gameObject, Vector3 position, Material team, Cell.State state)
+    {
+        if (gridIsEmpty(position))
+        {
+            int x = (int)position.x;
+            int z = (int)position.z;
+            // Instantiate Team GameObject
+            Instantiate(gameObject, position, transform.rotation * Quaternion.Euler(90f, 0f, 0f));
+            // Change Grid Material
+            grid.grid[z][x].cellObject.GetComponent<MeshRenderer>().material = team;
+            // Set Cell State
+            grid.grid[z][x].state = state;
+            //Debug.Log("Set State : " + grid.grid[x][z].state);
+            CheckVictory();
+        }   
     }
 
     private void CheckVictory()
