@@ -13,7 +13,7 @@ public class GridWorldController : MonoBehaviour
     public GameObject leftArrow;
     public GameObject rightArrow;
     
-    public enum Intents
+    public enum GridWorldIntent
     {
         Down,
         Up,

@@ -3,6 +3,7 @@
 public class AgentSelector : MonoBehaviour
 {
     [SerializeField] private AgentPolicy policyAgent;
+    [SerializeField] private AgentMonteCarlo monteCarloAgent;
 
     public enum AgentType
     {
@@ -30,22 +31,16 @@ public class AgentSelector : MonoBehaviour
         switch (_type)
         {
             case AgentType.PolicyIteration:
-                policyAgent.LaunchAgent(AgentPolicy.PolicyAlgorithm.PolicyIteration);
-                break;
             case AgentType.ValueIteration:
-                policyAgent.LaunchAgent(AgentPolicy.PolicyAlgorithm.ValueIteration);
+                policyAgent.LaunchAgent(_type);
                 break;
             case AgentType.MonteCarloES:
-                break;
             case AgentType.MonteCarloESEvery:
-                break;
             case AgentType.MonteCarloOffPolicy:
-                break;
             case AgentType.MonteCarloOffPolicyEvery:
-                break;
             case AgentType.MonteCarloOnPolicy:
-                break;
             case AgentType.MonteCarloOnPolicyEvery:
+                monteCarloAgent.LaunchAgent(_type);
                 break;
             case AgentType.Sarsa:
                 break;
