@@ -26,6 +26,8 @@ public class Grid : MonoBehaviour
     public GameObject leftArrow;
     public GameObject rightArrow;
 
+    [SerializeField] public GameObject valueObject;
+
     public Vector3 startPos;
     public Vector3 endPos;
     /*private void Start()
@@ -88,14 +90,14 @@ public class Grid : MonoBehaviour
         int endX, endY;
         startX = Random.Range(0, gridWidth);
         startY = Random.Range(0, gridHeight);
-        startPos = new Vector3(startY,0.5f,startX);
+        startPos = new Vector3(startY,0.0f,startX);
         do
         {
             endX = Random.Range(0, gridWidth);
             endY = Random.Range(0, gridHeight);
         } while (endX == startX && endY == startY);
 
-        endPos = new Vector3(endY,0.5f,endX);
+        endPos = new Vector3(endY,0.0f,endX);
         grid[startX][startY].type = Cell.CellType.Start;
         grid[startX][startY].cellObject.GetComponent<MeshRenderer>().material = gridMaterials[(int)Cell.CellType.Start];
         grid[endX][endY].type = Cell.CellType.End;

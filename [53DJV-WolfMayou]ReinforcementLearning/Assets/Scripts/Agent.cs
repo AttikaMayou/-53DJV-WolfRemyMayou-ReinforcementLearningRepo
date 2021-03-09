@@ -14,13 +14,13 @@ public class Agent : MonoBehaviour
         //with policy iteration
         InitializePolicyIteration();
         Debug.Log("endinit");
-        for (int i = 0; i < 10; ++i)
+        for (int i = 0; i < 10000; ++i)
         {
             PolicyImprovement();
         }
         DebugIntents();
         Debug.Log("endImprovement");
-        int iter = 0;
+        /*int iter = 0;
         while (gridWorldController.player.transform.position != gridWorldController.grid.endPos)
         {
             Debug.Log(gridWorldController.player.transform.position);
@@ -48,7 +48,7 @@ public class Agent : MonoBehaviour
                 break;
             }
         }
-        Debug.Log("End");
+        Debug.Log("End");*/
     }
     
     public void InitializePolicyIteration()
@@ -60,8 +60,15 @@ public class Agent : MonoBehaviour
             for (int j = 0; j < gridWorldController.grid.gridWidth; ++j)
             {
                 State currentState = new State();
-                currentState.stateValue = Random.Range(-100.0f, 100.0f);
-                currentState.currentPlayerPos = new Vector3(i, 0, j);
+                currentState.currentPlayerPos = new Vector3(j, 0, i);
+                if (currentState.currentPlayerPos == gridWorldController.grid.endPos)
+                {
+                    currentState.stateValue = 1000.0f;
+                }
+                else
+                {
+                    currentState.stateValue = 0;
+                }
                 allStates.Add(currentState);
             }
         }
@@ -77,7 +84,7 @@ public class Agent : MonoBehaviour
     public void PolicyEvaluation()
     {
         float delta;
-        float theta = 0.01f;
+        float theta = 0.1f;
         float gamma = 0.7f;
         do
         {
@@ -96,7 +103,7 @@ public class Agent : MonoBehaviour
         } while (delta >= theta);
     }
 
-    public void PolicyImprovement()
+    public bool PolicyImprovement()
     {
         bool policyStable = true;
         foreach (var currentState in allStates)
@@ -114,6 +121,8 @@ public class Agent : MonoBehaviour
             Debug.Log("unstable");
             PolicyEvaluation();
         }
+
+        return policyStable;
     }
 
     public float Reward(State nextState)
@@ -228,10 +237,10 @@ public class Agent : MonoBehaviour
 
     public State GetStateFromPos(Vector3 pos)
     {
-        Debug.Log("getstate");
+        //Debug.Log("getstate");
         foreach (var state in allStates)
         {
-            Debug.Log(state.currentPlayerPos + " " + pos);
+            //Debug.Log(state.currentPlayerPos + " " + pos);
             if (state.currentPlayerPos == pos)
             {
                 return state;
@@ -249,12 +258,12 @@ public class Agent : MonoBehaviour
     {
         if (GetNextState(currentState, wantedIntent) == null)
         {
-            Debug.Log("pb de next state");
+            //Debug.Log("pb de next state");
             return false;
         }
         if (GetCellType(GetNextState(currentState, wantedIntent).currentPlayerPos) == Cell.CellType.Obstacle)
         {
-            Debug.Log("obstacle");
+            //Debug.Log("obstacle");
             return false;
         }
         return true;
@@ -280,6 +289,9 @@ public class Agent : MonoBehaviour
                         Quaternion.identity);
                     break;
             }
+
+            GameObject valueText = Instantiate(gridWorldController.grid.valueObject, state.currentPlayerPos + Vector3.up, Quaternion.Euler(90,0,0));
+            valueText.GetComponent<TextMesh>().text = (Mathf.Floor(state.stateValue*100)/100).ToString();
         }
     }
 }

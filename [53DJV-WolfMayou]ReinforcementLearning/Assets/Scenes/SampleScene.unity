@@ -168,6 +168,7 @@ MonoBehaviour:
   upArrow: {fileID: 8579721506763046866, guid: c37cb988d3277b6458e8edc96be08af8, type: 3}
   leftArrow: {fileID: 7262339212958791974, guid: 34f1beca255d8f748985f59416b89270, type: 3}
   rightArrow: {fileID: 8323636570078694502, guid: 271c7781fbb0f1a4084715784ef78aeb, type: 3}
+  valueObject: {fileID: 8447786999447757288, guid: 61c6974cb538d244d9a79ecd835f0384, type: 3}
   startPos: {x: 0, y: 0, z: 0}
   endPos: {x: 0, y: 0, z: 0}
 --- !u!4 &616517327
