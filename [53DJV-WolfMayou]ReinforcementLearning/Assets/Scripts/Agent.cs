@@ -304,7 +304,7 @@ public class Agent : MonoBehaviour
                     break;
             }
             
-            GameObject valueText = Instantiate(gridWorldController.grid.valueObject, state.currentPlayerPos + Vector3.up, Quaternion.Euler(90,0,0));
+            GameObject valueText = Instantiate(gridWorldController.grid.valueObject, (state.currentPlayerPos + Vector3.up) - new Vector3(0.1f, 0, 0.3f), Quaternion.Euler(90,0,0));
             valueText.GetComponent<TextMesh>().text = (Mathf.Floor(state.stateValue*100)/100).ToString();
             valueText.transform.SetParent(debugIntentParent.transform);
         }
