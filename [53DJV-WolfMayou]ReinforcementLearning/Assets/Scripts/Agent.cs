@@ -15,15 +15,19 @@ public class Agent : MonoBehaviour
     {
         //with policy iteration
         InitializePolicyIteration();
+        Debug.Log("endinit");
         for (int i = 0; i < 10; ++i)
         {
             PolicyImprovement();
         }
-
-        int iter = 0;
+        Debug.Log("endImprovement");
+        /*int iter = 0;
         while (gridWorldController.player.transform.position != gridWorldController.grid.endPos)
         {
+            Debug.Log(gridWorldController.player.transform.position);
             State currentState = GetStateFromPos(gridWorldController.player.transform.position);
+            Debug.Log(currentState);
+            Debug.Log(currentState.statePolicy);
             switch (currentState.statePolicy)
             {
                 case Intents.Down:
@@ -45,7 +49,7 @@ public class Agent : MonoBehaviour
                 break;
             }
         }
-        Debug.Log("End");
+        Debug.Log("End");*/
     }
     
     public void InitializePolicyIteration()
@@ -66,10 +70,10 @@ public class Agent : MonoBehaviour
         foreach (var currentState in allStates)
         {
             Intents wantedIntent;
-            do
-            {
-                wantedIntent = (Intents) Random.Range(0, 3);
-            } while (!CheckIntent(currentState, wantedIntent));
+            /*do
+            {*/
+            wantedIntent = (Intents) Random.Range(0, 3);
+            //} while (!CheckIntent(currentState, wantedIntent));
             currentState.statePolicy = wantedIntent;
         }
     }
@@ -111,6 +115,7 @@ public class Agent : MonoBehaviour
 
         if (!policyStable)
         {
+            Debug.Log("unstable");
             PolicyEvaluation();
         }
     }
@@ -226,14 +231,15 @@ public class Agent : MonoBehaviour
 
     public State GetStateFromPos(Vector3 pos)
     {
+        Debug.Log("getstate");
         foreach (var state in allStates)
         {
+            Debug.Log(state.currentPlayerPos + " " + pos);
             if (state.currentPlayerPos == pos)
             {
                 return state;
             }
         }
-
         return null;
     }
 
@@ -246,10 +252,12 @@ public class Agent : MonoBehaviour
     {
         if (GetNextState(currentState, wantedIntent) == null)
         {
+            Debug.Log("pb de next state");
             return false;
         }
         if (GetCellType(GetNextState(currentState, wantedIntent).currentPlayerPos) == Cell.CellType.Obstacle)
         {
+            Debug.Log("obstacle");
             return false;
         }
         return true;
