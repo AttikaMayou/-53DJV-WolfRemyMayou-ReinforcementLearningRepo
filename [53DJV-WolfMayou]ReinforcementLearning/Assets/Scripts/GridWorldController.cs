@@ -20,6 +20,39 @@ public class GridWorldController : MonoBehaviour
     {
         grid.InitGridWorld();
         player = Instantiate(player, grid.startPos,Quaternion.identity);
+        //with policy iteration
+        /*agent.InitializePolicyIteration();
+        for (int i = 0; i < 10; ++i)
+        {
+            agent.PolicyImprovement();
+        }
+
+        int iter = 0;
+        while (player.transform.position != grid.endPos)
+        {
+            State currentState = agent.GetStateFromPos(player.transform.position);
+            switch (currentState.statePolicy)
+            {
+                case Intents.Down:
+                    DownIntent();
+                    break;
+                case Intents.Up:
+                    UpIntent();
+                    break;
+                case Intents.Left:
+                    LeftIntent();
+                    break;
+                case Intents.Right:
+                    RightIntent();
+                    break;
+            }
+            ++iter;
+            if (iter > 1000)
+            {
+                break;
+            }
+        }
+        Debug.Log("End");*/
     }
 
     private void UpIntent()
