@@ -14,7 +14,7 @@ public class Agent : MonoBehaviour
         //with policy iteration
         InitializePolicyIteration();
         Debug.Log("endinit");
-        for (int i = 0; i < 10000; ++i)
+        for (int i = 0; i < 100; ++i)
         {
             PolicyImprovement();
         }
@@ -60,7 +60,7 @@ public class Agent : MonoBehaviour
             for (int j = 0; j < gridWorldController.grid.gridWidth; ++j)
             {
                 State currentState = new State();
-                currentState.currentPlayerPos = new Vector3(j, 0, i);
+                currentState.currentPlayerPos = new Vector3(i, 0, j);
                 if (currentState.currentPlayerPos == gridWorldController.grid.endPos)
                 {
                     currentState.stateValue = 1000.0f;
@@ -91,14 +91,24 @@ public class Agent : MonoBehaviour
             delta = 0;
             foreach (var currentState in allStates)
             {
-                float temp = currentState.stateValue; 
-                float v_S = 0;
-                foreach (var possibleStateDict in GetPossibleStatesFromIntent(currentState, currentState.statePolicy))
+                if (currentState.currentPlayerPos != gridWorldController.grid.endPos && GetCellType(currentState.currentPlayerPos) != Cell.CellType.Obstacle)
                 {
-                    v_S += possibleStateDict.Value * (Reward(possibleStateDict.Key) + gamma * possibleStateDict.Key.stateValue);
-                }
-                currentState.stateValue = v_S;
-                delta = Mathf.Max(delta, Mathf.Abs(temp - currentState.stateValue));
+                    float temp = currentState.stateValue;
+                    float v_S = 0;
+                    foreach (var possibleStateDict in GetPossibleStatesFromIntent(currentState,
+                        currentState.statePolicy))
+                    {
+                        v_S += possibleStateDict.Value *
+                               (Reward(possibleStateDict.Key) + gamma * possibleStateDict.Key.stateValue);
+                    }
+                    
+                    currentState.stateValue = v_S;
+                    if (GetCellType(currentState.currentPlayerPos) == Cell.CellType.Hole)
+                    {
+                        currentState.stateValue *= -1;
+                    }
+                    delta = Mathf.Max(delta, Mathf.Abs(temp - currentState.stateValue));
+                } 
             }
         } while (delta >= theta);
     }
@@ -144,7 +154,6 @@ public class Agent : MonoBehaviour
     
     public Intents GetBestIntent(State currentState)
     {
-        List<State> possibleStates = new List<State>();
         float max = float.MinValue;
         Intents bestIntent = currentState.statePolicy;
         for (int i = 0; i < 4; ++i)
@@ -152,7 +161,8 @@ public class Agent : MonoBehaviour
             if (CheckIntent(currentState, (Intents) i))
             {
                 State tempState = GetNextState(currentState, (Intents) i);
-                possibleStates.Add(tempState);
+                
+                Debug.Log("stateValue : "+tempState.stateValue);
                 if ( tempState.stateValue > max)
                 {
                     max = tempState.stateValue;
@@ -160,25 +170,27 @@ public class Agent : MonoBehaviour
                 }
             }
         }
+        
+        Debug.Log("maxValue : " + max);
         return bestIntent;
     }
 
     public float GetBestValue(State currentState)
     {
-        List<State> possibleStates = new List<State>();
         float max = float.MinValue;
         for (int i = 0; i < 4; ++i)
         {
             if (CheckIntent(currentState, (Intents) i))
             {
                 State tempState = GetNextState(currentState, (Intents) i);
-                possibleStates.Add(tempState);
+                Debug.Log("stateValue : "+tempState.stateValue);
                 if ( tempState.stateValue > max)
                 {
                     max = tempState.stateValue;
                 }
             }
         }
+        Debug.Log("maxValue : " + max);
         return max;
     }
 
@@ -243,6 +255,7 @@ public class Agent : MonoBehaviour
             //Debug.Log(state.currentPlayerPos + " " + pos);
             if (state.currentPlayerPos == pos)
             {
+                //Debug.Log("found");
                 return state;
             }
         }

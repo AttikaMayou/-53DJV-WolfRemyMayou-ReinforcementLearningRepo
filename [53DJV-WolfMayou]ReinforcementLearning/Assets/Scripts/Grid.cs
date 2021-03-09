@@ -59,7 +59,7 @@ public class Grid : MonoBehaviour
                 
                 grid[i][j] = new Cell();
                 
-                grid[i][j].cellObject = Instantiate(gridPrefab,new Vector3(j,0,i),Quaternion.identity);
+                grid[i][j].cellObject = Instantiate(gridPrefab,new Vector3(i,0,j),Quaternion.identity);
                 
                 float rdm = Random.Range(0.0f, 1.0f);
                 if (rdm < 0.8f)
@@ -90,14 +90,14 @@ public class Grid : MonoBehaviour
         int endX, endY;
         startX = Random.Range(0, gridWidth);
         startY = Random.Range(0, gridHeight);
-        startPos = new Vector3(startY,0.0f,startX);
+        startPos = new Vector3(startX,0.0f,startY);
         do
         {
             endX = Random.Range(0, gridWidth);
             endY = Random.Range(0, gridHeight);
         } while (endX == startX && endY == startY);
 
-        endPos = new Vector3(endY,0.0f,endX);
+        endPos = new Vector3(endX,0.0f,endY);
         grid[startX][startY].type = Cell.CellType.Start;
         grid[startX][startY].cellObject.GetComponent<MeshRenderer>().material = gridMaterials[(int)Cell.CellType.Start];
         grid[endX][endY].type = Cell.CellType.End;
