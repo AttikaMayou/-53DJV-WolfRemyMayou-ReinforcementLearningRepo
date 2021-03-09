@@ -13,11 +13,13 @@ public class Agent : MonoBehaviour
     public void LaunchAgent()
     {
         //with policy iteration
-        InitializePolicyIteration();
+        //InitializePolicyIteration();
+        InitializeValueIteration();
         Debug.Log("endinit");
-        for (int i = 0; i < 100; ++i)
+        for (int i = 0; i < 1; ++i)
         {
-            PolicyImprovement();
+            //PolicyImprovement();
+            ValueIteration();
         }
         DebugIntents();
         Debug.Log("endImprovement");
@@ -192,29 +194,57 @@ public class Agent : MonoBehaviour
         return max;
     }
 
-    public void ValueIteration()
+    public void InitializeValueIteration()
     {
-        float delta;
-        float theta = 0.01f;
-        float gamma = 0.7f;
         allStates = new List<State>();
         for (int i = 0; i < gridWorldController.grid.gridHeight; ++i)
         {
             for (int j = 0; j < gridWorldController.grid.gridWidth; ++j)
             {
                 State currentState = new State();
-                currentState.stateValue = 0;
+                currentState.currentPlayerPos = new Vector3(i, 0, j);
+                if (currentState.currentPlayerPos == gridWorldController.grid.endPos)
+                {
+                    currentState.stateValue = 1000.0f;
+                }
+                else
+                {
+                    currentState.stateValue = 0;
+                }
+                allStates.Add(currentState);
             }
         }
-
+    }
+    public void ValueIteration()
+    {
+        float delta;
+        float theta = 0.01f;
+        float gamma = 0.7f;
         do
         {
             delta = 0;
             foreach (var currentState in allStates)
             {
-                float temp = currentState.stateValue;
-                currentState.stateValue = GetBestValue(currentState);
-                delta = Mathf.Max(delta, Mathf.Abs(temp - currentState.stateValue));
+                if (currentState.currentPlayerPos != gridWorldController.grid.endPos &&
+                    GetCellType(currentState.currentPlayerPos) != Cell.CellType.Obstacle)
+                {
+                    float temp = currentState.stateValue;
+                    //currentState.stateValue = GetBestValue(currentState);
+                    
+                    float v_S = 0;
+                    foreach (var possibleStateDict in GetPossibleStatesFromIntent(currentState,GetBestIntent(currentState)))
+                    {
+                        v_S += possibleStateDict.Value *
+                               (Reward(possibleStateDict.Key) + gamma * possibleStateDict.Key.stateValue);
+                    }
+
+                    currentState.stateValue = v_S;
+                    if (GetCellType(currentState.currentPlayerPos) == Cell.CellType.Hole)
+                    {
+                        currentState.stateValue *= -1;
+                    }
+                    delta = Mathf.Max(delta, Mathf.Abs(temp - currentState.stateValue));
+                }
             }
         } while(delta >= theta);
 
