@@ -5,8 +5,13 @@ using UnityEngine;
 
 public class GridWorldController : MonoBehaviour
 {
-    [SerializeField] public GameObject player;
+    [SerializeField] public GameObject playerPrefab;
+    private GameObject _player;
     [SerializeField] public Grid grid;
+    public GameObject downArrow;
+    public GameObject upArrow;
+    public GameObject leftArrow;
+    public GameObject rightArrow;
     
     public enum Intents
     {
@@ -16,44 +21,44 @@ public class GridWorldController : MonoBehaviour
         Right
     }
     
-    private void Start()
+    public void InitGridWorldGame()
     {
-        if (grid.type == Grid.GameType.GridWorld)
-        {
-            grid.InitGridWorld();
-            player = Instantiate(player, grid.startPos, Quaternion.identity);
-        }
+        grid.gridWidth = 4;
+        grid.gridHeight = 4;
+        grid.GridWorld();
+        _player = Instantiate(playerPrefab, grid.startPos + new Vector3(0, 0.5f, 0), Quaternion.identity);
+        _player.transform.SetParent(this.transform);
     }
 
     public void UpIntent()
     {
-        if (player.transform.position.z < grid.gridHeight-1)
+        if (_player.transform.position.z < grid.gridHeight-1)
         {
-            player.transform.position += Vector3.forward;
+            _player.transform.position += Vector3.forward;
         }
     }
     
     public void DownIntent()
     {
-        if (player.transform.position.z > 0)
+        if (_player.transform.position.z > 0)
         {
-            player.transform.position -= Vector3.forward;
+            _player.transform.position -= Vector3.forward;
         }
     }
 
     public void LeftIntent()
     {
-        if (player.transform.position.x > 0)
+        if (_player.transform.position.x > 0)
         {
-            player.transform.position += Vector3.left;
+            _player.transform.position += Vector3.left;
         }
     }
 
     public void RightIntent()
     {
-        if (player.transform.position.x < grid.gridWidth-1)
+        if (_player.transform.position.x < grid.gridWidth-1)
         {
-            player.transform.position -= Vector3.left;
+            _player.transform.position -= Vector3.left;
         }
     }
 
