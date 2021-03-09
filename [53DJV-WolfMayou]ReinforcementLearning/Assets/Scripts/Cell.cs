@@ -21,6 +21,6 @@ public class Cell
     }
     
     public CellTicTacToeType cellTicTacToeType;
-    public CellGridWorldType gridWorldType;
+    public CellGridWorldType cellGridWorldType;
     public GameObject cellObject;
 }

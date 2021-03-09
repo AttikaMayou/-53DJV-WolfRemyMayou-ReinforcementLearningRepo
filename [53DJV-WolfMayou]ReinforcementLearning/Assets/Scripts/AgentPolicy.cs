@@ -305,7 +305,7 @@ public class AgentPolicy : MonoBehaviour
 
     public Cell.CellGridWorldType GetCellType(Vector3 pos)
     {
-        return gridWorldController.grid.grid[(int)pos.x][(int)pos.z].gridWorldType;
+        return gridWorldController.grid.grid[(int)pos.x][(int)pos.z].cellGridWorldType;
     }
 
     public bool CheckIntent(State currentState, Intents wantedIntent)

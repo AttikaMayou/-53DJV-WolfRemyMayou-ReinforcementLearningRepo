@@ -20,13 +20,6 @@ public class TicTacToeController : MonoBehaviour
         grid.gridWidth = 3;
         grid.gridHeight = 3;
         grid.TicTacToe();
-        if (grid.type == Grid.GameType.TicTacToe)
-        {
-            // Set TicTacToe Grid Size
-            grid.gridWidth = 3;
-            grid.gridHeight = 3;
-            grid.InitGridWorld();
-        }
     }
 
     // Update is called once per frame
@@ -54,7 +47,7 @@ public class TicTacToeController : MonoBehaviour
             float x = Mathf.Round(hit.point.x);
             float y = 0.5f;
             float z = Mathf.Round(hit.point.z);
-            Place(cross, new Vector3(x, y, z), crossGridMaterial, Cell.State.CROSS);
+            Place(cross, new Vector3(x, y, z), crossGridMaterial, Cell.CellTicTacToeType.Cross);
         }
     }
 
@@ -68,7 +61,7 @@ public class TicTacToeController : MonoBehaviour
             float x = Mathf.Round(hit.point.x);
             float y = 0.5f;
             float z = Mathf.Round(hit.point.z);
-            Place(circle, new Vector3(x, y, z), circleGridMaterial, Cell.State.CIRCLE);
+            Place(circle, new Vector3(x, y, z), circleGridMaterial, Cell.CellTicTacToeType.Circle);
         }
     }
 
@@ -76,7 +69,7 @@ public class TicTacToeController : MonoBehaviour
     {
         int x = (int)position.x;
         int z = (int)position.z;
-        if (grid.grid[z][x].state == Cell.State.NEUTRAL)
+        if (grid.grid[z][x].cellTicTacToeType == Cell.CellTicTacToeType.Neutral)
         {
             return true;
         }
@@ -84,19 +77,19 @@ public class TicTacToeController : MonoBehaviour
         return false;
     }
 
-    private void Place(GameObject prefabSign, Vector3 position, Material team, Cell.State state)
+    private void Place(GameObject prefabSign, Vector3 position, Material team, Cell.CellTicTacToeType cellType)
     {
         if (gridIsEmpty(position))
         {
             int x = (int)position.x;
             int z = (int)position.z;
             // Instantiate Team GameObject
-            GameObject sign = Instantiate( prefabSign, position, transform.rotation * Quaternion.Euler(90f, 0f, 0f));
+            GameObject sign = Instantiate(prefabSign, position, transform.rotation * Quaternion.Euler(90f, 0f, 0f));
             sign.transform.SetParent(this.transform);
             // Change Grid Material
             grid.grid[z][x].cellObject.GetComponent<MeshRenderer>().material = team;
             // Set Cell State
-            grid.grid[z][x].state = state;
+            grid.grid[z][x].cellTicTacToeType = cellType;
             //Debug.Log("Set State : " + grid.grid[x][z].state);
             CheckVictory();
         }   
@@ -115,19 +108,19 @@ public class TicTacToeController : MonoBehaviour
         bool isVictory = false;
         int x = 0;
         int z = 0;
-        Cell.State stateValue = grid.grid[z][x].state;
+        Cell.CellTicTacToeType cellType = grid.grid[z][x].cellTicTacToeType;
 
         // Horizontal (X Axe)
         for (x = 0; x < grid.gridHeight; x++)
         {
             z = 0;
-            stateValue = grid.grid[z][x].state;
+            cellType = grid.grid[z][x].cellTicTacToeType;
 
             // Vertical (Z Axe)
             for (z = 0; z < grid.gridWidth; z++)
             {
-                Debug.Log("Cell x = " + x + " ; " + "z = " + z + " ; State = " + grid.grid[z][x].state);
-                if (stateValue == grid.grid[z][x].state)
+                Debug.Log("Cell x = " + x + " ; " + "z = " + z + " ; cellTicTacToeType = " + grid.grid[z][x].cellTicTacToeType);
+                if (cellType == grid.grid[z][x].cellTicTacToeType)
                 {
                     isVictory = true;
                 }
@@ -136,7 +129,7 @@ public class TicTacToeController : MonoBehaviour
                     isVictory = false;
                     break;
                 }
-                stateValue = grid.grid[z][x].state;
+                cellType = grid.grid[z][x].cellTicTacToeType;
             } 
 
             /*if (isVictory)
@@ -147,13 +140,13 @@ public class TicTacToeController : MonoBehaviour
 
         if (isVictory)
         {
-            Debug.Log("Partie gagné sur ligne horizontale.");
+            Debug.Log("Partie gagnée sur ligne horizontale.");
         }
     }
 
     private void CheckVerticalRows()
     {
-        Cell.State stateValue = grid.grid[0][0].state;
+        Cell.CellTicTacToeType cellType = grid.grid[0][0].cellTicTacToeType;
         bool isVictory = false;
 
         // Vertical (Z Axe)
@@ -173,7 +166,7 @@ public class TicTacToeController : MonoBehaviour
 
         if (isVictory)
         {
-            Debug.Log("Partie gagné sur ligne verticale.");
+            Debug.Log("Partie gagnée sur ligne verticale.");
         }
     }
 
