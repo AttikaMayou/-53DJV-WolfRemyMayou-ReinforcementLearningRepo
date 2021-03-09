@@ -4,25 +4,40 @@ using UnityEngine;
 using Intents = GridWorldController.Intents;
 using Random = UnityEngine.Random;
 
-public class Agent : MonoBehaviour
+public class AgentPolicy : MonoBehaviour
 {
     [SerializeField] private GridWorldController gridWorldController;
-    private List<State> allStates;
+    private List<State> _allStates;
     [SerializeField] private DebuggerManager debugIntentParent;
 
-    public void LaunchAgent()
+    public enum PolicyAlgorithm
     {
-        //with policy iteration
-        //InitializePolicyIteration();
-        InitializeValueIteration();
-        Debug.Log("endinit");
-        for (int i = 0; i < 1; ++i)
+        PolicyIteration,
+        ValueIteration
+    }
+    
+    public void LaunchAgent(PolicyAlgorithm algo)
+    {
+        switch (algo)
         {
-            //PolicyImprovement();
-            ValueIteration();
+            case PolicyAlgorithm.PolicyIteration:
+                InitializePolicyIteration();
+                for (int i = 0; i < 10; ++i)
+                {
+                    PolicyImprovement();
+                }
+                break;
+            case PolicyAlgorithm.ValueIteration:
+                InitializeValueIteration();
+                for (int i = 0; i < 1; ++i)
+                {
+                    ValueIteration();
+                }
+                break;
         }
+
         DebugIntents();
-        Debug.Log("endImprovement");
+        
         /*int iter = 0;
         while (gridWorldController.player.transform.position != gridWorldController.grid.endPos)
         {
@@ -57,7 +72,7 @@ public class Agent : MonoBehaviour
     public void InitializePolicyIteration()
     {
         Debug.Log("Initialization");
-        allStates = new List<State>();
+        _allStates = new List<State>();
         for (int i = 0; i < gridWorldController.grid.gridHeight; ++i)
         {
             for (int j = 0; j < gridWorldController.grid.gridWidth; ++j)
@@ -72,12 +87,12 @@ public class Agent : MonoBehaviour
                 {
                     currentState.stateValue = 0;
                 }
-                allStates.Add(currentState);
+                _allStates.Add(currentState);
             }
         }
-        Debug.Log("Number of states : " + allStates.Count);
+        Debug.Log("Number of states : " + _allStates.Count);
 
-        foreach (var currentState in allStates)
+        foreach (var currentState in _allStates)
         {
             Intents wantedIntent= (Intents) Random.Range(0, 3);
             currentState.statePolicy = wantedIntent;
@@ -92,9 +107,9 @@ public class Agent : MonoBehaviour
         do
         {
             delta = 0;
-            foreach (var currentState in allStates)
+            foreach (var currentState in _allStates)
             {
-                if (currentState.currentPlayerPos != gridWorldController.grid.endPos && GetCellType(currentState.currentPlayerPos) != Cell.CellType.Obstacle)
+                if (currentState.currentPlayerPos != gridWorldController.grid.endPos && GetCellType(currentState.currentPlayerPos) != Cell.CellGridWorldType.Obstacle)
                 {
                     float temp = currentState.stateValue;
                     float v_S = 0;
@@ -106,7 +121,7 @@ public class Agent : MonoBehaviour
                     }
                     
                     currentState.stateValue = v_S;
-                    if (GetCellType(currentState.currentPlayerPos) == Cell.CellType.Hole)
+                    if (GetCellType(currentState.currentPlayerPos) == Cell.CellGridWorldType.Hole)
                     {
                         currentState.stateValue *= -1;
                     }
@@ -119,7 +134,7 @@ public class Agent : MonoBehaviour
     public bool PolicyImprovement()
     {
         bool policyStable = true;
-        foreach (var currentState in allStates)
+        foreach (var currentState in _allStates)
         {
             Intents tempPolicy = currentState.statePolicy;
             currentState.statePolicy = GetBestIntent(currentState);
@@ -141,7 +156,7 @@ public class Agent : MonoBehaviour
     public float Reward(State nextState)
     {
         float result = gridWorldController.grid.gridHeight * gridWorldController.grid.gridWidth - (Vector3.Distance(nextState.currentPlayerPos, gridWorldController.grid.endPos));
-        if (GetCellType(nextState.currentPlayerPos) == Cell.CellType.Obstacle)
+        if (GetCellType(nextState.currentPlayerPos) == Cell.CellGridWorldType.Obstacle)
         {
             return result - 1000;
         }
@@ -196,7 +211,7 @@ public class Agent : MonoBehaviour
 
     public void InitializeValueIteration()
     {
-        allStates = new List<State>();
+        _allStates = new List<State>();
         for (int i = 0; i < gridWorldController.grid.gridHeight; ++i)
         {
             for (int j = 0; j < gridWorldController.grid.gridWidth; ++j)
@@ -211,7 +226,7 @@ public class Agent : MonoBehaviour
                 {
                     currentState.stateValue = 0;
                 }
-                allStates.Add(currentState);
+                _allStates.Add(currentState);
             }
         }
     }
@@ -223,10 +238,10 @@ public class Agent : MonoBehaviour
         do
         {
             delta = 0;
-            foreach (var currentState in allStates)
+            foreach (var currentState in _allStates)
             {
                 if (currentState.currentPlayerPos != gridWorldController.grid.endPos &&
-                    GetCellType(currentState.currentPlayerPos) != Cell.CellType.Obstacle)
+                    GetCellType(currentState.currentPlayerPos) != Cell.CellGridWorldType.Obstacle)
                 {
                     float temp = currentState.stateValue;
                     //currentState.stateValue = GetBestValue(currentState);
@@ -239,7 +254,7 @@ public class Agent : MonoBehaviour
                     }
 
                     currentState.stateValue = v_S;
-                    if (GetCellType(currentState.currentPlayerPos) == Cell.CellType.Hole)
+                    if (GetCellType(currentState.currentPlayerPos) == Cell.CellGridWorldType.Hole)
                     {
                         currentState.stateValue *= -1;
                     }
@@ -248,7 +263,7 @@ public class Agent : MonoBehaviour
             }
         } while(delta >= theta);
 
-        foreach (var currentState in allStates)
+        foreach (var currentState in _allStates)
         {
             currentState.statePolicy = GetBestIntent(currentState);
         }
@@ -277,7 +292,7 @@ public class Agent : MonoBehaviour
 
     public State GetStateFromPos(Vector3 pos)
     {
-        foreach (var state in allStates)
+        foreach (var state in _allStates)
         {
             if (state.currentPlayerPos == pos)
             {
@@ -288,9 +303,9 @@ public class Agent : MonoBehaviour
         return null;
     }
 
-    public Cell.CellType GetCellType(Vector3 pos)
+    public Cell.CellGridWorldType GetCellType(Vector3 pos)
     {
-        return gridWorldController.grid.grid[(int)pos.x][(int)pos.z].type;
+        return gridWorldController.grid.grid[(int)pos.x][(int)pos.z].gridWorldType;
     }
 
     public bool CheckIntent(State currentState, Intents wantedIntent)
@@ -299,7 +314,7 @@ public class Agent : MonoBehaviour
         {
             return false;
         }
-        if (GetCellType(GetNextState(currentState, wantedIntent).currentPlayerPos) == Cell.CellType.Obstacle)
+        if (GetCellType(GetNextState(currentState, wantedIntent).currentPlayerPos) == Cell.CellGridWorldType.Obstacle)
         {
             return false;
         }
@@ -310,25 +325,25 @@ public class Agent : MonoBehaviour
     {
         debugIntentParent.ClearIntents();
 
-        foreach (var state in allStates)
+        foreach (var state in _allStates)
         {
             GameObject arrow;
             switch (state.statePolicy)
             {
                 case Intents.Down:
-                    arrow = Instantiate(gridWorldController.grid.downArrow, state.currentPlayerPos, Quaternion.identity);
+                    arrow = Instantiate(gridWorldController.downArrow, state.currentPlayerPos, Quaternion.identity);
                     arrow.transform.SetParent(debugIntentParent.transform);
                     break;
                 case Intents.Up:
-                    arrow = Instantiate(gridWorldController.grid.upArrow, state.currentPlayerPos, Quaternion.identity);
+                    arrow = Instantiate(gridWorldController.upArrow, state.currentPlayerPos, Quaternion.identity);
                     arrow.transform.SetParent(debugIntentParent.transform);
                     break;
                 case Intents.Left:
-                    arrow = Instantiate(gridWorldController.grid.leftArrow, state.currentPlayerPos, Quaternion.identity);
+                    arrow = Instantiate(gridWorldController.leftArrow, state.currentPlayerPos, Quaternion.identity);
                     arrow.transform.SetParent(debugIntentParent.transform);
                     break;
                 case Intents.Right:
-                    arrow = Instantiate(gridWorldController.grid.rightArrow, state.currentPlayerPos,
+                    arrow = Instantiate(gridWorldController.rightArrow, state.currentPlayerPos,
                         Quaternion.identity);
                     arrow.transform.SetParent(debugIntentParent.transform);
                     break;

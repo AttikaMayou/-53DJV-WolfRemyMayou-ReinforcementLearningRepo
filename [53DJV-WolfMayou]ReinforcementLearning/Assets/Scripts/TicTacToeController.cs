@@ -14,9 +14,12 @@ public class TicTacToeController : MonoBehaviour
     [SerializeField] public Material crossGridMaterial;
     [SerializeField] public Material circleGridMaterial;
 
-    // Start is called before the first frame update
-    void Start()
+    public void InitTicTacToeGame()
     {
+        // Set TicTacToe Grid Size
+        grid.gridWidth = 3;
+        grid.gridHeight = 3;
+        grid.TicTacToe();
         if (grid.type == Grid.GameType.TicTacToe)
         {
             // Set TicTacToe Grid Size
@@ -81,14 +84,15 @@ public class TicTacToeController : MonoBehaviour
         return false;
     }
 
-    private void Place(GameObject gameObject, Vector3 position, Material team, Cell.State state)
+    private void Place(GameObject prefabSign, Vector3 position, Material team, Cell.State state)
     {
         if (gridIsEmpty(position))
         {
             int x = (int)position.x;
             int z = (int)position.z;
             // Instantiate Team GameObject
-            Instantiate(gameObject, position, transform.rotation * Quaternion.Euler(90f, 0f, 0f));
+            GameObject sign = Instantiate( prefabSign, position, transform.rotation * Quaternion.Euler(90f, 0f, 0f));
+            sign.transform.SetParent(this.transform);
             // Change Grid Material
             grid.grid[z][x].cellObject.GetComponent<MeshRenderer>().material = team;
             // Set Cell State

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Cell
 {
-    public enum CellType
+    public enum CellGridWorldType
     {
         Empty,
         Obstacle,
@@ -13,14 +13,14 @@ public class Cell
         End
     }
 
-    public enum State
+    public enum CellTicTacToeType
     {
-        NEUTRAL = -1,
-        CROSS = 0,
-        CIRCLE = 1
+        Neutral = -1,
+        Cross = 0,
+        Circle = 1
     }
-    public State state;
-
-    public CellType type;
+    
+    public CellTicTacToeType cellTicTacToeType;
+    public CellGridWorldType gridWorldType;
     public GameObject cellObject;
 }
