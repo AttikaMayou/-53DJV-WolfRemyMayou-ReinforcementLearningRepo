@@ -18,8 +18,11 @@ public class GridWorldController : MonoBehaviour
     
     private void Start()
     {
-        grid.InitGridWorld();
-        player = Instantiate(player, grid.startPos,Quaternion.identity);
+        if (grid.type == Grid.GameType.GridWorld)
+        {
+            grid.InitGridWorld();
+            player = Instantiate(player, grid.startPos, Quaternion.identity);
+        }
     }
 
     public void UpIntent()

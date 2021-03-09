@@ -14,7 +14,7 @@ public class Grid : MonoBehaviour
         Sokoban
     }
 
-    [SerializeField] private GameType type;
+    [SerializeField] public GameType type;
     public Cell[][] grid;
 
     [SerializeField] public int gridWidth;
@@ -31,8 +31,23 @@ public class Grid : MonoBehaviour
 
     public Vector3 startPos;
     public Vector3 endPos;
+    private void Start()
+    {
+    }
 
     public void InitGridWorld()
+    {
+        if (type == GameType.GridWorld)
+        {
+            GridWorld();
+        }
+        else if (type == GameType.TicTacToe)
+        {
+            TicTacToe();
+        }
+    }
+
+    private void GridWorld()
     {
         debuggerManager.ClearIntents();
         foreach (Transform child in this.transform)
@@ -44,11 +59,9 @@ public class Grid : MonoBehaviour
 
         for (int i = 0; i < gridHeight; ++i)
         {
-            
             grid[i] = new Cell[gridWidth];
             for (int j = 0; j < gridWidth; ++j)
             {
-                
                 grid[i][j] = new Cell();
                 
                 grid[i][j].cellObject = Instantiate(gridPrefab,new Vector3(i,0,j),Quaternion.identity);
@@ -73,9 +86,8 @@ public class Grid : MonoBehaviour
                         grid[i][j].type = Cell.CellType.Obstacle;
                     }
                 }
-                
+
                 grid[i][j].cellObject.GetComponent<MeshRenderer>().material = gridMaterials[(int)grid[i][j].type];
-                
             }
         }
 
@@ -95,5 +107,20 @@ public class Grid : MonoBehaviour
         grid[startX][startY].cellObject.GetComponent<MeshRenderer>().material = gridMaterials[(int)Cell.CellType.Start];
         grid[endX][endY].type = Cell.CellType.End;
         grid[endX][endY].cellObject.GetComponent<MeshRenderer>().material = gridMaterials[(int)Cell.CellType.End];
+    }
+
+    private void TicTacToe()
+    {
+        grid = new Cell[gridHeight][];
+
+        for (int i = 0; i < gridHeight; ++i)
+        {
+            grid[i] = new Cell[gridWidth];
+            for (int j = 0; j < gridWidth; ++j)
+            {
+                grid[i][j] = new Cell();
+                grid[i][j].cellObject = Instantiate(gridPrefab, new Vector3(j, 0, i), Quaternion.identity);
+            }
+        }
     }
 }

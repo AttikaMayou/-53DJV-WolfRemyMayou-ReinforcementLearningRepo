@@ -841,6 +841,7 @@ GameObject:
   - component: {fileID: 616517326}
   - component: {fileID: 616517328}
   - component: {fileID: 616517329}
+  - component: {fileID: 616517330}
   m_Layer: 0
   m_Name: GameController
   m_TagString: Untagged
@@ -860,7 +861,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 795c09dcfd08f4c48a5464372d43bc2c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type: 0
+  type: 1
   gridWidth: 4
   gridHeight: 4
   gridPrefab: {fileID: 8617325152571129655, guid: a5b8c54c4c1fb094699202653b9029d0, type: 3}
@@ -920,6 +921,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gridWorldController: {fileID: 616517328}
   debugIntentParent: {fileID: 462736663}
+--- !u!114 &616517330
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 616517325}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 603c546b07bbb4a4db7abec34a89fffa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  grid: {fileID: 616517326}
+  cross: {fileID: 1035101989347948, guid: 043b8deffe3bb5a45bba5fbbf57dbe27, type: 3}
+  circle: {fileID: 1314037438050228, guid: 453b795a99d8e85448d0c9bc874e58b2, type: 3}
+  crossGridMaterial: {fileID: 2100000, guid: d46376af6ec0d504da82c3d081f4219b, type: 2}
+  circleGridMaterial: {fileID: 2100000, guid: 10b05ba43a1df724fa7368f64e2d0fb7, type: 2}
 --- !u!1 &669184705
 GameObject:
   m_ObjectHideFlags: 0
@@ -1371,7 +1389,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 12.35
+  m_fontSize: 18
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
