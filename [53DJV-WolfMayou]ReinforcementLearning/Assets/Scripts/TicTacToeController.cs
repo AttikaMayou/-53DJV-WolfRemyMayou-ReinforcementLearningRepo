@@ -153,18 +153,18 @@ public class TicTacToeController : MonoBehaviour
                 grid.grid[z][x].cellTicTacToeType = cellType;
                 
                 //Debug.Log("Set State : " + grid.grid[x][z].state);
-                CheckVictory(cellType);
+                CheckVictory(cellType, grid.grid);
             }
             return true;
         }
         return false;
     }
 
-    private void CheckVictory(Cell.CellTicTacToeType cellType)
+    private void CheckVictory(Cell.CellTicTacToeType cellType, Cell[][] currentGrid)
     {
-        CheckHorizontalRows(cellType);
-        CheckVerticalRows(cellType);
-        CheckDiagonal(cellType);
+        CheckHorizontalRows(cellType, currentGrid);
+        CheckVerticalRows(cellType, currentGrid);
+        CheckDiagonal(cellType, currentGrid);
         
         //Check match null
         int count = 0;
@@ -186,15 +186,15 @@ public class TicTacToeController : MonoBehaviour
         }
     }
 
-    private void CheckVerticalRows(Cell.CellTicTacToeType cellType)
+    public bool CheckVerticalRows(Cell.CellTicTacToeType cellType, Cell[][] currentGrid)
     {
         bool isVictory = false;
 
         for (int x = 0; x < grid.gridHeight; x++)
         {
-            if (grid.grid[0][x].cellTicTacToeType == cellType
-            && grid.grid[1][x].cellTicTacToeType == cellType 
-            && grid.grid[2][x].cellTicTacToeType == cellType)
+            if (currentGrid[0][x].cellTicTacToeType == cellType
+            && currentGrid[1][x].cellTicTacToeType == cellType 
+            && currentGrid[2][x].cellTicTacToeType == cellType)
             {
                 isVictory = true;
             }
@@ -204,17 +204,19 @@ public class TicTacToeController : MonoBehaviour
         {
             Debug.Log("Partie gagnée sur ligne verticale par " + cellType);
         }
+
+        return isVictory;
     }
 
-    private void CheckHorizontalRows(Cell.CellTicTacToeType cellType)
+    public bool CheckHorizontalRows(Cell.CellTicTacToeType cellType, Cell[][] currentGrid)
     {
         bool isVictory = false;
 
         for (int x = 0; x < grid.gridWidth; x++)
         {
-            if (grid.grid[x][0].cellTicTacToeType == cellType
-                && grid.grid[x][1].cellTicTacToeType == cellType 
-                && grid.grid[x][2].cellTicTacToeType == cellType)
+            if (currentGrid[x][0].cellTicTacToeType == cellType
+            && currentGrid[x][1].cellTicTacToeType == cellType
+            && currentGrid[x][2].cellTicTacToeType == cellType)
             {
                 isVictory = true;
             }
@@ -224,21 +226,23 @@ public class TicTacToeController : MonoBehaviour
         {
             Debug.Log("Partie gagnée sur ligne horizontale par " + cellType);
         }
+        return isVictory;
     }
 
-    private void CheckDiagonal(Cell.CellTicTacToeType cellType)
+    public bool CheckDiagonal(Cell.CellTicTacToeType cellType, Cell[][] currentGrid)
     {
-        bool isVictory = grid.grid[0][0].cellTicTacToeType == cellType
-                         && grid.grid[1][1].cellTicTacToeType == cellType 
-                         && grid.grid[2][2].cellTicTacToeType == cellType
-                         || grid.grid[0][2].cellTicTacToeType == cellType
-                         && grid.grid[1][1].cellTicTacToeType == cellType 
-                         && grid.grid[2][0].cellTicTacToeType == cellType;
+        bool isVictory = currentGrid[0][0].cellTicTacToeType == cellType
+                         && currentGrid[1][1].cellTicTacToeType == cellType 
+                         && currentGrid[2][2].cellTicTacToeType == cellType
+                         || currentGrid[0][2].cellTicTacToeType == cellType
+                         && currentGrid[1][1].cellTicTacToeType == cellType 
+                         && currentGrid[2][0].cellTicTacToeType == cellType;
         
         if (isVictory)
         {
             Debug.Log("Partie gagnée sur une diagonale par " + cellType);
         }
+        return isVictory;
     }
 
 }

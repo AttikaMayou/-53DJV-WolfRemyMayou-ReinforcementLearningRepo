@@ -6,9 +6,16 @@ using Intent = TicTacToeController.TicTacToeIntent;
 
 public class AgentMonteCarlo : MonoBehaviour
 {
+    private class Episode
+    {
+        public State state;
+        public Intent intent;
+        public float reward;
+    }
+    
     [SerializeField] private TicTacToeController ticTacToeController;
     private List<State> _allStates;
-    private List<State> _simulatedStates;
+    private List<Episode> _simulatedEpisodes;
 
     public void LaunchAgent(AgentSelector.AgentType algo)
     {
@@ -56,6 +63,7 @@ public class AgentMonteCarlo : MonoBehaviour
 
     private void SimulateGame(State currentState)
     {
+        //LA ON FAIT TOUT ALEATOIRE MAIS IL FAUT COMMENCER PAR LA POLICY QUI SERAIT UN INTENT, PUIS FAIRE DE L'ALEATOIRE
         bool gameOver = false;
         do
         {
@@ -67,10 +75,52 @@ public class AgentMonteCarlo : MonoBehaviour
                 intentValid = ticTacToeController.ProcessIntent(rdmIntent, true);
             } while (!intentValid);
 
-            _simulatedStates.Add(GetNextState(currentState, rdmIntent, true, false));
-            
-            gameOver = true;
+            Episode newEpisode = new Episode();
+            newEpisode.state = GetNextState(currentState, rdmIntent, true, false);
+            newEpisode.intent = rdmIntent;
+            newEpisode.reward = GetReward(Cell.CellTicTacToeType.Cross,newEpisode.state);
+            _simulatedEpisodes.Add(newEpisode);
+            if (newEpisode.reward >= 1000)
+            {
+                gameOver = true;
+            }
         } while (!gameOver);
+    }
+
+    private float GetReward(Cell.CellTicTacToeType type, State currentState)
+    {
+        int reward = 0;
+        if (ticTacToeController.CheckDiagonal(Cell.CellTicTacToeType.Circle, currentState.currentGrid) ||
+            ticTacToeController.CheckVerticalRows(Cell.CellTicTacToeType.Circle, currentState.currentGrid) ||
+            ticTacToeController.CheckHorizontalRows(Cell.CellTicTacToeType.Circle, currentState.currentGrid))
+        {
+            if (type == Cell.CellTicTacToeType.Circle)
+            {
+                reward += 1000;
+            }
+            else
+            {
+                reward -= 1000;
+            }
+        } else if (ticTacToeController.CheckDiagonal(Cell.CellTicTacToeType.Cross, currentState.currentGrid) ||
+                    ticTacToeController.CheckVerticalRows(Cell.CellTicTacToeType.Cross, currentState.currentGrid) ||
+                    ticTacToeController.CheckHorizontalRows(Cell.CellTicTacToeType.Cross, currentState.currentGrid))
+        {
+            if (type == Cell.CellTicTacToeType.Cross)
+            {
+                reward += 1000;
+            }
+            else
+            {
+                reward -= 1000;
+            }
+        }
+        else
+        {
+            reward = 1;
+        }
+        
+        return reward;
     }
 
     public State GetNextState(State currentState, Intent intent, bool player1 = true, bool reference = true)
