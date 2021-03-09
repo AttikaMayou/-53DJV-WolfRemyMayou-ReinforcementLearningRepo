@@ -120,6 +120,7 @@ public class Grid : MonoBehaviour
             {
                 grid[i][j] = new Cell();
                 grid[i][j].cellObject = Instantiate(gridPrefab, new Vector3(j, 0, i), Quaternion.identity);
+                grid[i][j].state = Cell.State.NEUTRAL;
             }
         }
     }
