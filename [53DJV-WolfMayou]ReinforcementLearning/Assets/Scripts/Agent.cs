@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using Intents = GridWorldController.Intents;
 using Random = UnityEngine.Random;
@@ -66,14 +64,28 @@ public class Agent : MonoBehaviour
                 allStates.Add(currentState);
             }
         }
+        Debug.Log("Number of states : " + allStates.Count);
 
         foreach (var currentState in allStates)
         {
-            Intents wantedIntent;
-            /*do
-            {*/
-            wantedIntent = (Intents) Random.Range(0, 3);
-            //} while (!CheckIntent(currentState, wantedIntent));
+            Intents wantedIntent= (Intents) Random.Range(0, 3);
+            switch (wantedIntent)
+            {
+                case Intents.Down:
+                    Instantiate(gridWorldController.grid.downArrow, currentState.currentPlayerPos, Quaternion.identity);
+                    break;
+                case Intents.Up:
+                    Instantiate(gridWorldController.grid.upArrow, currentState.currentPlayerPos, Quaternion.identity);
+                    break;
+                case Intents.Left:
+                    Instantiate(gridWorldController.grid.leftArrow, currentState.currentPlayerPos, Quaternion.identity);
+                    break;
+                case Intents.Right:
+                    Instantiate(gridWorldController.grid.rightArrow, currentState.currentPlayerPos, Quaternion.identity);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
             currentState.statePolicy = wantedIntent;
         }
     }
@@ -208,6 +220,7 @@ public class Agent : MonoBehaviour
             currentState.statePolicy = GetBestIntent(currentState);
         }
     }
+    
     public State GetNextState(State currentState, Intents intent)
     {
         Vector3 nextPlayerPos = Vector3.zero;

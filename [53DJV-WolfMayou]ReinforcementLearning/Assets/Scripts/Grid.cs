@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 public class Grid : MonoBehaviour
@@ -20,6 +21,10 @@ public class Grid : MonoBehaviour
     [SerializeField] public int gridHeight;
     [SerializeField] private GameObject gridPrefab;
     [SerializeField] private List<Material> gridMaterials;
+    public GameObject downArrow;
+    public GameObject upArrow;
+    public GameObject leftArrow;
+    public GameObject rightArrow;
 
     public Vector3 startPos;
     public Vector3 endPos;

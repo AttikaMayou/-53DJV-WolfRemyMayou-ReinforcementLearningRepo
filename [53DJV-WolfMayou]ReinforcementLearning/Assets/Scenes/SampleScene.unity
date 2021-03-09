@@ -164,6 +164,10 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 48828c7aa524d75428d0173355498bdb, type: 2}
   - {fileID: 2100000, guid: dccc77927f322454d8d50325509978b9, type: 2}
   - {fileID: 2100000, guid: 36246dcf355e1384b820cba1c73cb5a6, type: 2}
+  downArrow: {fileID: 4139335594525618537, guid: b2ead66f3080fe5489141bbc5d17808b, type: 3}
+  upArrow: {fileID: 8579721506763046866, guid: c37cb988d3277b6458e8edc96be08af8, type: 3}
+  leftArrow: {fileID: 7262339212958791974, guid: 34f1beca255d8f748985f59416b89270, type: 3}
+  rightArrow: {fileID: 8323636570078694502, guid: 271c7781fbb0f1a4084715784ef78aeb, type: 3}
   startPos: {x: 0, y: 0, z: 0}
   endPos: {x: 0, y: 0, z: 0}
 --- !u!4 &616517327
@@ -666,12 +670,12 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
+  m_fontSize: 18
   m_fontSizeBase: 24
   m_fontWeight: 400
-  m_enableAutoSizing: 0
-  m_fontSizeMin: 18
-  m_fontSizeMax: 72
+  m_enableAutoSizing: 1
+  m_fontSizeMin: 12
+  m_fontSizeMax: 18
   m_fontStyle: 0
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
