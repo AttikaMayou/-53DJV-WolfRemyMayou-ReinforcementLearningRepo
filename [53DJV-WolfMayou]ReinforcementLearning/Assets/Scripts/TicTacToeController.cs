@@ -14,6 +14,8 @@ public class TicTacToeController : MonoBehaviour
     [SerializeField] public Material crossGridMaterial;
     [SerializeField] public Material circleGridMaterial;
 
+    private bool isPlayer1Turn = true;
+
     public void InitTicTacToeGame()
     {
         // Set TicTacToe Grid Size
@@ -26,12 +28,12 @@ public class TicTacToeController : MonoBehaviour
     void Update()
     {
         // Mouse Left Click
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && isPlayer1Turn)
         {
             onMouseLeftClick();
         }
         // Mouse Right Click
-        if (Input.GetMouseButtonDown(1))
+        if (Input.GetMouseButtonDown(1) && !isPlayer1Turn)
         {
             onMouseRightClick();
         }
@@ -73,7 +75,7 @@ public class TicTacToeController : MonoBehaviour
         {
             return true;
         }
-        Debug.Log("Place prise");
+        Debug.Log("Place prise.");
         return false;
     }
 
@@ -81,6 +83,8 @@ public class TicTacToeController : MonoBehaviour
     {
         if (gridIsEmpty(position))
         {
+            // Change Player Turn
+            isPlayer1Turn = !isPlayer1Turn;
             int x = (int)position.x;
             int z = (int)position.z;
             // Instantiate Team GameObject
