@@ -102,11 +102,13 @@ public class SokobanController : MonoBehaviour
                         }
                         else
                         {
-                            if ((crate.transform.position += direction).z < grid.gridHeight - 1 ||
-                                (crate.transform.position += direction).z > 0 ||
-                                (crate.transform.position += direction).x > 0 ||
-                                (crate.transform.position += direction).x < grid.gridWidth - 1)
+                            Debug.Log("Pas de mur en obstacle je déplace la caisse.");
+                            if ((crate.transform.position += direction).z < grid.gridHeight ||
+                                (crate.transform.position += direction).z > 1 ||
+                                (crate.transform.position += direction).x > 1 ||
+                                (crate.transform.position += direction).x < grid.gridWidth)
                             {
+                                Debug.Log("Caisse déplacé.");
                                 crate.transform.position += direction;
                                 return true;
                             }
@@ -119,6 +121,7 @@ public class SokobanController : MonoBehaviour
                     }
                     else
                     {
+                        Debug.Log("Pas d'obstacle je déplace la caisse.");
                         crate.transform.position += direction;
                         return true;
                     }
