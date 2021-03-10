@@ -12,8 +12,6 @@ public class AgentSelector : MonoBehaviour
     {
         PolicyIteration,
         ValueIteration,
-        MonteCarloES,
-        MonteCarloESEvery,
         MonteCarloOffPolicy,
         MonteCarloOffPolicyEvery,
         MonteCarloOnPolicy,
@@ -37,8 +35,6 @@ public class AgentSelector : MonoBehaviour
             case AgentType.ValueIteration:
                 policyAgent.LaunchAgent(_type, stepByStep.isOn);
                 break;
-            case AgentType.MonteCarloES:
-            case AgentType.MonteCarloESEvery:
             case AgentType.MonteCarloOffPolicy:
             case AgentType.MonteCarloOffPolicyEvery:
             case AgentType.MonteCarloOnPolicy:

@@ -29,7 +29,7 @@ public class TicTacToeController : MonoBehaviour
     }
     
     private bool _isPlayer1Turn = true;
-    private bool _gameIsOver = false;
+    public bool _gameIsOver = false;
 
     public void InitTicTacToeGame()
     {
@@ -37,6 +37,7 @@ public class TicTacToeController : MonoBehaviour
         grid.gridWidth = 3;
         grid.gridHeight = 3;
         grid.TicTacToe();
+        _gameIsOver = false;
     }
     
     public bool ProcessIntent(TicTacToeIntent wantedIntent)
@@ -47,36 +48,9 @@ public class TicTacToeController : MonoBehaviour
          
     }
 
-    // Update is called once per frame
-    private void Update()
-    {
-        // Mouse Left Click
-        if (Input.GetMouseButtonDown(0) && _isPlayer1Turn)
-        {
-            OnMouseLeftClick();
-        }
-        // Mouse Right Click
-        if (Input.GetMouseButtonDown(1) && !_isPlayer1Turn)
-        {
-            OnMouseRightClick();
-        }
-    }
 
-    private void OnMouseLeftClick()
-    {
-        Vector3 mouse = Input.mousePosition;
-        Ray castPoint = Camera.main.ScreenPointToRay(mouse);
-        RaycastHit hit;
-        if (Physics.Raycast(castPoint, out hit, Mathf.Infinity))
-        {
-            float x = Mathf.Round(hit.point.x);
-            float y = 0.5f;
-            float z = Mathf.Round(hit.point.z);
-            Place(cross, new Vector3(x, y, z), crossGridMaterial, Cell.CellTicTacToeType.Cross);
-        }
-    }
 
-    private void OnMouseRightClick()
+    /*private void OnMouseRightClick()
     {
         Vector3 mouse = Input.mousePosition;
         Ray castPoint = Camera.main.ScreenPointToRay(mouse);
@@ -88,7 +62,7 @@ public class TicTacToeController : MonoBehaviour
             float z = Mathf.Round(hit.point.z);
             Place(circle, new Vector3(x, y, z), circleGridMaterial, Cell.CellTicTacToeType.Circle);
         }
-    }
+    }*/
 
     public bool GridIsEmpty(Vector3 position, Cell[][] currentGrid)
     {
@@ -98,7 +72,7 @@ public class TicTacToeController : MonoBehaviour
         {
             return true;
         }
-        Debug.Log("Place prise.");
+        //Debug.Log("Place prise.");
         return false;
     }
 
@@ -154,7 +128,7 @@ public class TicTacToeController : MonoBehaviour
         if (GridIsEmpty(position,grid.grid))
         {
             // Change Player Turn
-            _isPlayer1Turn = !_isPlayer1Turn;
+            //_isPlayer1Turn = !_isPlayer1Turn;
             
             int x = (int)position.x;
             int z = (int)position.z;
@@ -178,9 +152,12 @@ public class TicTacToeController : MonoBehaviour
 
     private void CheckVictory(Cell.CellTicTacToeType cellType, Cell[][] currentGrid)
     {
-        CheckHorizontalRows(cellType, currentGrid);
-        CheckVerticalRows(cellType, currentGrid);
-        CheckDiagonal(cellType, currentGrid);
+        if (CheckHorizontalRows(cellType, currentGrid) ||
+            CheckVerticalRows(cellType, currentGrid) ||
+            CheckDiagonal(cellType, currentGrid))
+        {
+            _gameIsOver = true;
+        }
         
         //Check match null
         int count = 0;
