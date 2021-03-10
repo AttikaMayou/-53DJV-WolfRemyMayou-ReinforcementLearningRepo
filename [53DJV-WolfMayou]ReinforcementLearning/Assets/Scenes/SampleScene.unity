@@ -1829,11 +1829,11 @@ MonoBehaviour:
   grid: {fileID: 616517326}
   playerPrefab: {fileID: 3415598520799521712, guid: ecc859db11b83f94b8be612b06e13a93, type: 3}
   _player: {fileID: 0}
-  emptyGridMaterial: {fileID: 2100000, guid: 022bed50dcdddfb47b806b69420fa848, type: 2}
-  wallGridMaterial: {fileID: 2100000, guid: 34874071311da644e9a944d6f678e9cb, type: 2}
-  crateGridMaterial: {fileID: 2100000, guid: 67792de37872d8640b7b0e15a6a4305a, type: 2}
-  cratePlacedGridMaterial: {fileID: 2100000, guid: 54e03ca06a33b9b44aaddeb9ad3885d9, type: 2}
-  targetBoxGridMaterial: {fileID: 2100000, guid: 5f7e7d6e6cb94414db25b9b83ed8ccac, type: 2}
+  emptyMaterial: {fileID: 2100000, guid: 022bed50dcdddfb47b806b69420fa848, type: 2}
+  wallMaterial: {fileID: 2100000, guid: 34874071311da644e9a944d6f678e9cb, type: 2}
+  crateMaterial: {fileID: 2100000, guid: 67792de37872d8640b7b0e15a6a4305a, type: 2}
+  cratePlacedMaterial: {fileID: 2100000, guid: 54e03ca06a33b9b44aaddeb9ad3885d9, type: 2}
+  targetBoxMaterial: {fileID: 2100000, guid: 5f7e7d6e6cb94414db25b9b83ed8ccac, type: 2}
   crate: {fileID: 2874402120597970996, guid: 36e7460e0ce83414bb1696f07119df34, type: 3}
   wall: {fileID: 4532560354219611892, guid: 87a2b9025059e5e43a7190c7500dac06, type: 3}
   worldLimit: {fileID: 766310609207391741, guid: 6bc2aea383eac80458fa6ec08ce79ddb, type: 3}

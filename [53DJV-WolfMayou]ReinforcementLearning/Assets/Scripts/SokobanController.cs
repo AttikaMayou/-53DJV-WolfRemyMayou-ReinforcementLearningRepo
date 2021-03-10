@@ -9,12 +9,12 @@ public class SokobanController : MonoBehaviour
     [SerializeField] public GameObject playerPrefab;
     public GameObject _player;
 
-    [Header("Grid Color")]
-    [SerializeField] public Material emptyGridMaterial;
-    [SerializeField] public Material wallGridMaterial;
-    [SerializeField] public Material crateGridMaterial;
-    [SerializeField] public Material cratePlacedGridMaterial;
-    [SerializeField] public Material targetBoxGridMaterial;
+    [Header("Material Color")]
+    [SerializeField] public Material emptyMaterial;
+    [SerializeField] public Material wallMaterial;
+    [SerializeField] public Material crateMaterial;
+    [SerializeField] public Material cratePlacedMaterial;
+    [SerializeField] public Material targetBoxMaterial;
 
     [Header("GameObject")]
     [SerializeField] public GameObject crate;
@@ -74,13 +74,15 @@ public class SokobanController : MonoBehaviour
     }
 
     // Crate hit a target box ?
-    private bool crateHitTargetBox(Vector3 position)
+    private bool IsCrateHitTargetBox(GameObject gameObject)
     {
-        int x = (int)position.x;
-        int z = (int)position.z;
+        int x = (int)gameObject.transform.position.x;
+        int z = (int)gameObject.transform.position.z;
         if (grid.grid[z][x].cellSokobanType == Cell.CellSokobanType.CrateTarget)
         {
             Debug.Log("La caisse à touché une cible.");
+            // Update Crate Material
+            gameObject.GetComponent<MeshRenderer>().material = cratePlacedMaterial;
             filledTargetBox++;
             CheckVictory();
             return true;
@@ -138,7 +140,7 @@ public class SokobanController : MonoBehaviour
                         Debug.Log("Pas d'obstacle je déplace la caisse.");
                         crate.transform.position += direction;
                         Debug.Log("Vector3 : " + crate.transform.position);
-                        crateHitTargetBox(crate.transform.position);
+                        IsCrateHitTargetBox(crate);
                         return true;
                     }
                 }
@@ -147,7 +149,7 @@ public class SokobanController : MonoBehaviour
                     Debug.Log("Pas d'obstacle je déplace la caisse.");
                     crate.transform.position += direction;
                     Debug.Log("Vector3 : " + crate.transform.position);
-                    crateHitTargetBox(crate.transform.position);
+                    IsCrateHitTargetBox(crate);
                     return true;
                 }
             }

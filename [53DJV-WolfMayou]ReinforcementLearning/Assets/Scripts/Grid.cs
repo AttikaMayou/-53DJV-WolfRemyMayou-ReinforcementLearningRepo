@@ -134,7 +134,7 @@ public class Grid : MonoBehaviour
                 grid[i][j].cellObject = Instantiate(gridPrefab, new Vector3(j, 0, i), Quaternion.identity);
                 grid[i][j].cellObject.transform.SetParent(this.transform);
                 grid[i][j].cellSokobanType = Cell.CellSokobanType.Empty;
-                grid[i][j].cellObject.GetComponent<MeshRenderer>().material = sokobanController.emptyGridMaterial;
+                grid[i][j].cellObject.GetComponent<MeshRenderer>().material = sokobanController.emptyMaterial;
             }
         }
 
@@ -216,13 +216,13 @@ public class Grid : MonoBehaviour
         GameObject crate = Instantiate(sokobanController.crate, new Vector3(x, 1.0f, z), Quaternion.identity);
         crate.transform.SetParent(this.transform);
         crate.tag = "Crate";
-        grid[z][x].cellObject.GetComponent<MeshRenderer>().material = sokobanController.crateGridMaterial;
+        grid[z][x].cellObject.GetComponent<MeshRenderer>().material = sokobanController.crateMaterial;
     }
 
     private void createTargetBox(int x, int z)
     {
         grid[z][x].cellSokobanType = Cell.CellSokobanType.CrateTarget;
-        grid[z][x].cellObject.GetComponent<MeshRenderer>().material = sokobanController.targetBoxGridMaterial;
+        grid[z][x].cellObject.GetComponent<MeshRenderer>().material = sokobanController.targetBoxMaterial;
         sokobanController.totalTargetBox++;
     }
 
@@ -232,7 +232,7 @@ public class Grid : MonoBehaviour
         GameObject wall = Instantiate(sokobanController.wall, new Vector3(x, 1.0f, z), Quaternion.identity);
         wall.transform.SetParent(this.transform);
         wall.tag = "Wall";
-        grid[z][x].cellObject.GetComponent<MeshRenderer>().material = sokobanController.wallGridMaterial;
+        grid[z][x].cellObject.GetComponent<MeshRenderer>().material = sokobanController.wallMaterial;
     }
 
     private void createWorldLimit(int x, int z)
