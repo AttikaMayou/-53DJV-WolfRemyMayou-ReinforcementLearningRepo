@@ -59,6 +59,18 @@ public class SokobanController : MonoBehaviour
         }
     }
 
+    // Crate hit a target box ?
+    private bool crateHitTargetBox()
+    {
+        return false;
+    }
+
+    // Check if all targets boxes have a crate
+    private void CheckVictory()
+    {
+
+    }
+
     // Check Collision With Player
     private bool checkCollision(Vector3 currentPosition, Vector3 direction)
     {
