@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
+using Intent = GridWorldController.GridWorldIntent;
+using CellType = Cell.CellGridWorldType;
 
 public class AgentPolicy : MonoBehaviour
 {
@@ -56,16 +58,16 @@ public class AgentPolicy : MonoBehaviour
             State currentState = GetStateFromPos(gridWorldController._player.transform.position-Vector3.up*0.5f);
             switch (currentState.gridWorldPolicy)
             {
-                case GridWorldController.GridWorldIntent.Down:
+                case Intent.Down:
                     gridWorldController.DownIntent();
                     break;
-                case GridWorldController.GridWorldIntent.Up:
+                case Intent.Up:
                     gridWorldController.UpIntent();
                     break;
-                case GridWorldController.GridWorldIntent.Left:
+                case Intent.Left:
                     gridWorldController.LeftIntent();
                     break;
-                case GridWorldController.GridWorldIntent.Right:
+                case Intent.Right:
                     gridWorldController.RightIntent();
                     break;
             }
@@ -103,7 +105,7 @@ public class AgentPolicy : MonoBehaviour
 
         foreach (var currentState in _allStates)
         {
-            GridWorldController.GridWorldIntent wantedGridWorldIntent= (GridWorldController.GridWorldIntent) Random.Range(0, 3);
+            Intent wantedGridWorldIntent= (Intent) Random.Range(0, 3);
             currentState.gridWorldPolicy = wantedGridWorldIntent;
         }
     }
@@ -118,7 +120,7 @@ public class AgentPolicy : MonoBehaviour
             delta = 0;
             foreach (var currentState in _allStates)
             {
-                if (currentState.currentPlayerPos != gridWorldController.grid.endPos && GetCellType(currentState.currentPlayerPos) != Cell.CellGridWorldType.Obstacle)
+                if (currentState.currentPlayerPos != gridWorldController.grid.endPos && GetCellType(currentState.currentPlayerPos) != CellType.Obstacle)
                 {
                     float temp = currentState.stateValue;
                     float v_S = 0;
@@ -130,7 +132,7 @@ public class AgentPolicy : MonoBehaviour
                     }
                     
                     currentState.stateValue = v_S;
-                    if (GetCellType(currentState.currentPlayerPos) == Cell.CellGridWorldType.Hole)
+                    if (GetCellType(currentState.currentPlayerPos) == CellType.Hole)
                     {
                         currentState.stateValue *= -1;
                     }
@@ -145,7 +147,7 @@ public class AgentPolicy : MonoBehaviour
         bool policyStable = true;
         foreach (var currentState in _allStates)
         {
-            GridWorldController.GridWorldIntent tempPolicy = currentState.gridWorldPolicy;
+            Intent tempPolicy = currentState.gridWorldPolicy;
             currentState.gridWorldPolicy = GetBestIntent(currentState);
             if (tempPolicy != currentState.gridWorldPolicy)
             {
@@ -165,33 +167,33 @@ public class AgentPolicy : MonoBehaviour
     public float Reward(State nextState)
     {
         float result = gridWorldController.grid.gridHeight * gridWorldController.grid.gridWidth - (Vector3.Distance(nextState.currentPlayerPos, gridWorldController.grid.endPos));
-        if (GetCellType(nextState.currentPlayerPos) == Cell.CellGridWorldType.Obstacle)
+        if (GetCellType(nextState.currentPlayerPos) == CellType.Obstacle)
         {
             return result - 1000;
         }
         return result;
     }
 
-    public Dictionary<State, float> GetPossibleStatesFromIntent(State currentState, GridWorldController.GridWorldIntent gridWorldIntent)
+    public Dictionary<State, float> GetPossibleStatesFromIntent(State currentState, Intent gridWorldIntent)
     {
         Dictionary<State, float> possibleStates = new Dictionary<State, float>();
         possibleStates.Add(GetNextState(currentState, gridWorldIntent),1.0f);
         return possibleStates;
     }
     
-    public GridWorldController.GridWorldIntent GetBestIntent(State currentState)
+    public Intent GetBestIntent(State currentState)
     {
         float max = float.MinValue;
-        GridWorldController.GridWorldIntent bestGridWorldIntent = currentState.gridWorldPolicy;
+        Intent bestGridWorldIntent = currentState.gridWorldPolicy;
         for (int i = 0; i < 4; ++i)
         {
-            if (CheckIntent(currentState, (GridWorldController.GridWorldIntent) i))
+            if (CheckIntent(currentState, (Intent) i))
             {
-                State tempState = GetNextState(currentState, (GridWorldController.GridWorldIntent) i);
+                State tempState = GetNextState(currentState, (Intent) i);
                 if ( tempState.stateValue > max)
                 {
                     max = tempState.stateValue;
-                    bestGridWorldIntent = (GridWorldController.GridWorldIntent) i;
+                    bestGridWorldIntent = (Intent) i;
                 }
             }
         }
@@ -231,7 +233,7 @@ public class AgentPolicy : MonoBehaviour
             foreach (var currentState in _allStates)
             {
                 if (currentState.currentPlayerPos != gridWorldController.grid.endPos &&
-                    GetCellType(currentState.currentPlayerPos) != Cell.CellGridWorldType.Obstacle)
+                    GetCellType(currentState.currentPlayerPos) != CellType.Obstacle)
                 {
                     float temp = currentState.stateValue;
                     //currentState.stateValue = GetBestValue(currentState);
@@ -244,7 +246,7 @@ public class AgentPolicy : MonoBehaviour
                     }
 
                     currentState.stateValue = v_S;
-                    if (GetCellType(currentState.currentPlayerPos) == Cell.CellGridWorldType.Hole)
+                    if (GetCellType(currentState.currentPlayerPos) == CellType.Hole)
                     {
                         currentState.stateValue *= -1;
                     }
@@ -259,21 +261,21 @@ public class AgentPolicy : MonoBehaviour
         }
     }
     
-    public State GetNextState(State currentState, GridWorldController.GridWorldIntent gridWorldIntent)
+    public State GetNextState(State currentState,Intent gridWorldIntent)
     {
         Vector3 nextPlayerPos = Vector3.zero;
         switch (gridWorldIntent)
         {
-            case GridWorldController.GridWorldIntent.Down:
+            case Intent.Down:
                 nextPlayerPos = currentState.currentPlayerPos - Vector3.forward;
                 break;
-            case GridWorldController.GridWorldIntent.Up:
+            case Intent.Up:
                 nextPlayerPos = currentState.currentPlayerPos + Vector3.forward;
                 break;
-            case GridWorldController.GridWorldIntent.Left:
+            case Intent.Left:
                 nextPlayerPos = currentState.currentPlayerPos + Vector3.left;
                 break;
-            case GridWorldController.GridWorldIntent.Right:
+            case Intent.Right:
                 nextPlayerPos = currentState.currentPlayerPos - Vector3.left;
                 break;
         }
@@ -293,18 +295,18 @@ public class AgentPolicy : MonoBehaviour
         return null;
     }
 
-    public Cell.CellGridWorldType GetCellType(Vector3 pos)
+    public CellType GetCellType(Vector3 pos)
     {
         return gridWorldController.grid.grid[(int)pos.x][(int)pos.z].cellGridWorldType;
     }
 
-    public bool CheckIntent(State currentState, GridWorldController.GridWorldIntent wantedGridWorldIntent)
+    public bool CheckIntent(State currentState, Intent wantedGridWorldIntent)
     {
         if (GetNextState(currentState, wantedGridWorldIntent) == null)
         {
             return false;
         }
-        if (GetCellType(GetNextState(currentState, wantedGridWorldIntent).currentPlayerPos) == Cell.CellGridWorldType.Obstacle)
+        if (GetCellType(GetNextState(currentState, wantedGridWorldIntent).currentPlayerPos) == CellType.Obstacle)
         {
             return false;
         }
@@ -320,19 +322,19 @@ public class AgentPolicy : MonoBehaviour
             GameObject arrow;
             switch (state.gridWorldPolicy)
             {
-                case GridWorldController.GridWorldIntent.Down:
+                case Intent.Down:
                     arrow = Instantiate(gridWorldController.downArrow, state.currentPlayerPos, Quaternion.identity);
                     arrow.transform.SetParent(debugIntentParent.transform);
                     break;
-                case GridWorldController.GridWorldIntent.Up:
+                case Intent.Up:
                     arrow = Instantiate(gridWorldController.upArrow, state.currentPlayerPos, Quaternion.identity);
                     arrow.transform.SetParent(debugIntentParent.transform);
                     break;
-                case GridWorldController.GridWorldIntent.Left:
+                case Intent.Left:
                     arrow = Instantiate(gridWorldController.leftArrow, state.currentPlayerPos, Quaternion.identity);
                     arrow.transform.SetParent(debugIntentParent.transform);
                     break;
-                case GridWorldController.GridWorldIntent.Right:
+                case Intent.Right:
                     arrow = Instantiate(gridWorldController.rightArrow, state.currentPlayerPos,
                         Quaternion.identity);
                     arrow.transform.SetParent(debugIntentParent.transform);

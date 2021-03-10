@@ -39,41 +39,12 @@ public class TicTacToeController : MonoBehaviour
         grid.TicTacToe();
     }
     
-    public bool ProcessIntent(TicTacToeIntent wantedIntent, bool simulation = false)
+    public bool ProcessIntent(TicTacToeIntent wantedIntent)
     {
         if (_isPlayer1Turn) return false;
-        switch (wantedIntent)
-        {
-            case TicTacToeIntent.Tile0:
-                return Place(circle, new Vector3(0, 0.5f, 0), circleGridMaterial, Cell.CellTicTacToeType.Circle, simulation);
-                break;
-            case TicTacToeIntent.Tile1:
-                return Place(circle, new Vector3(0, 0.5f, 1), circleGridMaterial, Cell.CellTicTacToeType.Circle, simulation);
-                break;
-            case TicTacToeIntent.Tile2:
-                return Place(circle, new Vector3(0, 0.5f, 2), circleGridMaterial, Cell.CellTicTacToeType.Circle, simulation);
-                break;
-            case TicTacToeIntent.Tile3:
-                return Place(circle, new Vector3(1, 0.5f, 0), circleGridMaterial, Cell.CellTicTacToeType.Circle, simulation);
-                break;
-            case TicTacToeIntent.Tile4:
-                return Place(circle, new Vector3(1, 0.5f, 1), circleGridMaterial, Cell.CellTicTacToeType.Circle, simulation);
-                break;
-            case TicTacToeIntent.Tile5:
-                return Place(circle, new Vector3(1, 0.5f, 2), circleGridMaterial, Cell.CellTicTacToeType.Circle, simulation);
-                break;
-            case TicTacToeIntent.Tile6:
-                return Place(circle, new Vector3(2, 0.5f, 0), circleGridMaterial, Cell.CellTicTacToeType.Circle, simulation);
-                break;
-            case TicTacToeIntent.Tile7:
-                return Place(circle, new Vector3(2, 0.5f, 1), circleGridMaterial, Cell.CellTicTacToeType.Circle, simulation);
-                break;
-            case TicTacToeIntent.Tile8:
-                return Place(circle, new Vector3(2, 0.5f, 2), circleGridMaterial, Cell.CellTicTacToeType.Circle, simulation);
-                break;
-        }
-
-        return false;
+       
+        return Place(circle, GetPositionFromIntent(wantedIntent), circleGridMaterial, Cell.CellTicTacToeType.Circle);
+         
     }
 
     // Update is called once per frame
@@ -131,30 +102,75 @@ public class TicTacToeController : MonoBehaviour
         return false;
     }
 
-    private bool Place(GameObject prefabSign, Vector3 position, Material team, Cell.CellTicTacToeType cellType, bool simulation = false)
+    public Vector3 GetPositionFromIntent(TicTacToeIntent intent)
+    {
+        Vector3 position = new Vector3(0, 0.5f, 0);
+        
+        switch (intent)
+        {
+            case TicTacToeIntent.Tile0:
+                position.x = 0;
+                position.z = 0;
+                break;
+            case TicTacToeIntent.Tile1:
+                position.x = 0;
+                position.z = 1;
+                break;
+            case TicTacToeIntent.Tile2:
+                position.x = 0;
+                position.z = 2;
+                break;
+            case TicTacToeIntent.Tile3:
+                position.x = 1;
+                position.z = 0;
+                break;
+            case TicTacToeIntent.Tile4:
+                position.x = 1;
+                position.z = 1;
+                break;
+            case TicTacToeIntent.Tile5:
+                position.x = 1;
+                position.z = 2;
+                break;
+            case TicTacToeIntent.Tile6:
+                position.x = 2;
+                position.z = 0;
+                break;
+            case TicTacToeIntent.Tile7:
+                position.x = 2;
+                position.z = 1;
+                break;
+            case TicTacToeIntent.Tile8:
+                position.x = 2;
+                position.z = 2;
+                break;
+        }
+
+        return position;
+    }
+    
+    public bool Place(GameObject prefabSign, Vector3 position, Material team, Cell.CellTicTacToeType cellType)
     {
         if (GridIsEmpty(position,grid.grid))
         {
-            if (!simulation)
-            { 
-                // Change Player Turn
-                _isPlayer1Turn = !_isPlayer1Turn;
-                
-                int x = (int)position.x;
-                int z = (int)position.z;
-                // Instantiate Team GameObject
-                GameObject sign = Instantiate(prefabSign, position, transform.rotation * Quaternion.Euler(90f, 0f, 0f));
-                sign.transform.SetParent(this.transform);
-                
-                // Change Grid Material
-                grid.grid[z][x].cellObject.GetComponent<MeshRenderer>().material = team;
-                
-                // Set Cell State
-                grid.grid[z][x].cellTicTacToeType = cellType;
-                
-                //Debug.Log("Set State : " + grid.grid[x][z].state);
-                CheckVictory(cellType, grid.grid);
-            }
+            // Change Player Turn
+            _isPlayer1Turn = !_isPlayer1Turn;
+            
+            int x = (int)position.x;
+            int z = (int)position.z;
+            // Instantiate Team GameObject
+            GameObject sign = Instantiate(prefabSign, position, transform.rotation * Quaternion.Euler(90f, 0f, 0f));
+            sign.transform.SetParent(this.transform);
+            
+            // Change Grid Material
+            grid.grid[z][x].cellObject.GetComponent<MeshRenderer>().material = team;
+            
+            // Set Cell State
+            grid.grid[z][x].cellTicTacToeType = cellType;
+            
+            //Debug.Log("Set State : " + grid.grid[x][z].state);
+            CheckVictory(cellType, grid.grid);
+            
             return true;
         }
         return false;
