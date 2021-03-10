@@ -65,6 +65,7 @@ public class SokobanController : MonoBehaviour
         Vector3 targetPosition = currentPosition + direction;
         int x = (int)targetPosition.x;
         int z = (int)targetPosition.z;
+        float maxDistance = 1.0f;
 
         // If Wall
         if (grid.grid[z][x].cellSokobanType == Cell.CellSokobanType.Wall)
@@ -80,24 +81,52 @@ public class SokobanController : MonoBehaviour
 
             // Get the crate
             RaycastHit hit;
-            if (Physics.Raycast(currentPosition, direction, out hit, Mathf.Infinity))
+            if (Physics.Raycast(currentPosition, direction, out hit, maxDistance))
             {
                 Debug.Log("Caisse hit.");
 
                 if (hit.collider.gameObject.tag == "Crate")
                 {
-                    Debug.Log("Caisse correcte tag.");
+                    Debug.Log("Hit a le tag Crate.");
+                    GameObject crate = hit.collider.gameObject;
 
                     // Can i move the crate
-                    if (true)
+                    if (Physics.Raycast(crate.transform.position, direction, out hit, maxDistance))
                     {
-                        return true;
+                        if (hit.collider.gameObject.tag == "Wall")
+                        {
+                            Debug.Log("Hit a le tag Wall.");
+                            Debug.Log("Impossible de déplacer la caisse.");
+                            Debug.Log(hit.collider.gameObject);
+                            return false;
+                        }
+                        else
+                        {
+                            if ((crate.transform.position += direction).z < grid.gridHeight - 1 ||
+                                (crate.transform.position += direction).z > 0 ||
+                                (crate.transform.position += direction).x > 0 ||
+                                (crate.transform.position += direction).x < grid.gridWidth - 1)
+                            {
+                                crate.transform.position += direction;
+                                return true;
+                            }
+                            else
+                            {
+                                Debug.Log("Impossible de déplacer la caisse hors de la carte.");
+                                return false;
+                            }
+                        }                      
                     }
                     else
                     {
-                        Debug.Log("Impossible de déplacer la caisse.");
-                        return false;
+                        crate.transform.position += direction;
+                        return true;
                     }
+                }
+                else
+                {
+                    Debug.Log("Hit a pas le tag Crate.");
+                    Debug.Log(hit.collider.gameObject);
                 }
             }
         }

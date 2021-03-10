@@ -140,7 +140,7 @@ public class Grid : MonoBehaviour
 
         // Set Player Start
         grid[0][0].cellSokobanType = Cell.CellSokobanType.Start;
-        sokobanController._player = Instantiate(sokobanController.playerPrefab, startPos + new Vector3(0, 0.5f, 0), Quaternion.identity);
+        sokobanController._player = Instantiate(sokobanController.playerPrefab, startPos + new Vector3(0, 1.0f, 0), Quaternion.identity);
         sokobanController._player.transform.SetParent(this.transform);
 
         // Set Crates
@@ -157,7 +157,7 @@ public class Grid : MonoBehaviour
     private void createCrate(int x, int z)
     {
         grid[z][x].cellSokobanType = Cell.CellSokobanType.Crate;
-        GameObject crate = Instantiate(sokobanController.crate, new Vector3(x, 0.5f, z), Quaternion.identity);
+        GameObject crate = Instantiate(sokobanController.crate, new Vector3(x, 1.0f, z), Quaternion.identity);
         crate.transform.SetParent(this.transform);
         crate.tag = "Crate";
         grid[z][x].cellObject.GetComponent<MeshRenderer>().material = sokobanController.crateGridMaterial;
@@ -172,8 +172,9 @@ public class Grid : MonoBehaviour
     private void createWall(int x, int z)
     {
         grid[z][x].cellSokobanType = Cell.CellSokobanType.Wall;
-        GameObject wall = Instantiate(sokobanController.wall, new Vector3(x, 0.5f, z), Quaternion.identity);
+        GameObject wall = Instantiate(sokobanController.wall, new Vector3(x, 1.0f, z), Quaternion.identity);
         wall.transform.SetParent(this.transform);
+        wall.tag = "Wall";
         grid[z][x].cellObject.GetComponent<MeshRenderer>().material = sokobanController.wallGridMaterial;
     }
 }
