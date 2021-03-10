@@ -20,7 +20,7 @@ public class Grid : MonoBehaviour
     public Vector3 startPos;
     public Vector3 endPos;
     public bool hasBeenInitialized = false;
-    
+
     public void GridWorld()
     {
         debuggerManager.ClearIntents();
@@ -70,20 +70,19 @@ public class Grid : MonoBehaviour
         int endX, endY;
         var startX = Random.Range(0, gridWidth);
         var startY = Random.Range(0, gridHeight);
-        startPos = new Vector3(startX,0.0f,startY);
+        startPos = new Vector3(startX, 0.0f, startY);
         do
         {
             endX = Random.Range(0, gridWidth);
             endY = Random.Range(0, gridHeight);
         } while (endX == startX && endY == startY);
 
-        endPos = new Vector3(endX,0.0f,endY);
+        endPos = new Vector3(endX, 0.0f, endY);
         grid[startX][startY].cellGridWorldType = Cell.CellGridWorldType.Start;
         grid[startX][startY].cellObject.GetComponent<MeshRenderer>().material = gridMaterials[(int)Cell.CellGridWorldType.Start];
         grid[endX][endY].cellGridWorldType = Cell.CellGridWorldType.End;
         grid[endX][endY].cellObject.GetComponent<MeshRenderer>().material = gridMaterials[(int)Cell.CellGridWorldType.End];
     }
-
     
     public void TicTacToe()
     {
@@ -108,7 +107,6 @@ public class Grid : MonoBehaviour
         }
     }
 
-
     public void Sokoban()
     {
         debuggerManager.ClearIntents();
@@ -116,5 +114,33 @@ public class Grid : MonoBehaviour
         {
             Destroy(child.gameObject);
         }
+
+        grid = new Cell[gridHeight][];
+
+        // Create Grid
+        for (int i = 0; i < gridHeight; ++i)
+        {
+            grid[i] = new Cell[gridWidth];
+            for (int j = 0; j < gridWidth; ++j)
+            {
+                grid[i][j] = new Cell();
+                grid[i][j].cellObject = Instantiate(gridPrefab, new Vector3(j, 0, i), Quaternion.identity);
+                grid[i][j].cellObject.transform.SetParent(this.transform);
+                grid[i][j].cellSokobanType = Cell.CellSokobanType.Empty;
+            }
+        }
+
+        // Set Player Start
+        int endX, endY;
+        var startX = Random.Range(0, gridWidth);
+        var startY = Random.Range(0, gridHeight);
+        startPos = new Vector3(startX, 0.0f, startY);
+        do
+        {
+            endX = Random.Range(0, gridWidth);
+            endY = Random.Range(0, gridHeight);
+        } while (endX == startX && endY == startY);
+
+        grid[startX][startY].cellSokobanType = Cell.CellSokobanType.Start;
     }
 }

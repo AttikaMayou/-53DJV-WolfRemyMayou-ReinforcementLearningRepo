@@ -9,6 +9,13 @@ public class SokobanController : MonoBehaviour
     [SerializeField] public GameObject playerPrefab;
     public GameObject _player;
 
+    [Header("Grid Color")]
+    [SerializeField] public Material crateGridMaterial;
+    [SerializeField] public Material cratePlacedGridMaterial;
+    [SerializeField] public Material emptyGridMaterial;
+    [SerializeField] public Material targetBoxGridMaterial;
+    [SerializeField] public Material wallGridMaterial;
+
     private int playerStrokeNumber = 0;
     private bool gameIsFinished = false;
 
@@ -28,6 +35,7 @@ public class SokobanController : MonoBehaviour
         grid.Sokoban();
         _player = Instantiate(playerPrefab, grid.startPos + new Vector3(0, 0.5f, 0), Quaternion.identity);
         _player.transform.SetParent(this.transform);
+        grid.grid[(int)grid.startPos.z][(int)grid.startPos.x].cellObject.GetComponent<MeshRenderer>().material = emptyGridMaterial;
     }
 
     public void UpIntent()
