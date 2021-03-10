@@ -144,13 +144,14 @@ public class Grid : MonoBehaviour
         sokobanController._player.transform.SetParent(this.transform);
 
         // Set Crates
-        createCrate(3, 2);
+        createCrate(3, 1);
 
         // Set Targets Boxes
         createTargetBox(3, 3);
 
         // Set Walls
         createWall(0, 1);
+        createWall(1, 1);
     }
 
     private void createCrate(int x, int z)
