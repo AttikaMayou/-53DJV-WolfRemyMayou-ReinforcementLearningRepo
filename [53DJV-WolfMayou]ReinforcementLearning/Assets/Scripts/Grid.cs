@@ -134,6 +134,7 @@ public class Grid : MonoBehaviour
                 grid[i][j].cellObject = Instantiate(gridPrefab, new Vector3(j, 0, i), Quaternion.identity);
                 grid[i][j].cellObject.transform.SetParent(this.transform);
                 grid[i][j].cellSokobanType = Cell.CellSokobanType.Empty;
+                grid[i][j].cellObject.GetComponent<MeshRenderer>().material = sokobanController.emptyGridMaterial;
             }
         }
 
@@ -150,5 +151,11 @@ public class Grid : MonoBehaviour
 
         grid[startX][startY].cellSokobanType = Cell.CellSokobanType.Start;
         grid[startX][startY].cellObject.GetComponent<MeshRenderer>().material = gridMaterials[(int)Cell.CellGridWorldType.Start];
+
+        // Set Crates
+
+        // Set Targets Boxes
+
+        // Set Walls
     }
 }

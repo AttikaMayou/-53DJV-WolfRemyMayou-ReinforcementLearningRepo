@@ -10,11 +10,11 @@ public class SokobanController : MonoBehaviour
     public GameObject _player;
 
     [Header("Grid Color")]
+    [SerializeField] public Material emptyGridMaterial;
+    [SerializeField] public Material wallGridMaterial;
     [SerializeField] public Material crateGridMaterial;
     [SerializeField] public Material cratePlacedGridMaterial;
-    [SerializeField] public Material emptyGridMaterial;
     [SerializeField] public Material targetBoxGridMaterial;
-    [SerializeField] public Material wallGridMaterial;
 
     private int playerStrokeNumber = 0;
     private bool gameIsFinished = false;
