@@ -9,14 +9,29 @@ public class AgentPolicy : MonoBehaviour
     private List<State> _allStates;
     [SerializeField] private DebuggerManager debugIntentParent;
 
+    public bool stepByStep;
+    public bool hasBeenInitialized;
+    
     public void LaunchAgent(AgentSelector.AgentType algo)
     {
         switch (algo)
         {
             case AgentSelector.AgentType.PolicyIteration:
-                InitializePolicyIteration();
-                for (int i = 0; i < 10; ++i)
+                if (!stepByStep)
                 {
+                    InitializePolicyIteration();
+                    for (int i = 0; i < 10; ++i)
+                    {
+                        PolicyImprovement();
+                    }
+                }
+                else
+                {
+                    if (!hasBeenInitialized)
+                    {
+                        InitializePolicyIteration();
+                        hasBeenInitialized = true;
+                    }
                     PolicyImprovement();
                 }
                 break;
@@ -30,7 +45,10 @@ public class AgentPolicy : MonoBehaviour
         }
 
         DebugIntents();
-        
+    }
+
+    public void FollowPath()
+    {
         int iter = 0;
         while (gridWorldController._player.transform.position-Vector3.up*0.5f != gridWorldController.grid.endPos)
         {
@@ -59,7 +77,12 @@ public class AgentPolicy : MonoBehaviour
         }
         Debug.Log("End");
     }
-    
+
+    public void SetStepByStep()
+    {
+        stepByStep = true;
+        hasBeenInitialized = false;
+    }
     public void InitializePolicyIteration()
     {
         Debug.Log("Initialization");
