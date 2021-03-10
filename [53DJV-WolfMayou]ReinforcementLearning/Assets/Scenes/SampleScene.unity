@@ -1836,6 +1836,8 @@ MonoBehaviour:
   targetBoxGridMaterial: {fileID: 2100000, guid: 5f7e7d6e6cb94414db25b9b83ed8ccac, type: 2}
   crate: {fileID: 2874402120597970996, guid: 36e7460e0ce83414bb1696f07119df34, type: 3}
   wall: {fileID: 4532560354219611892, guid: 87a2b9025059e5e43a7190c7500dac06, type: 3}
+  worldLimit: {fileID: 766310609207391741, guid: 6bc2aea383eac80458fa6ec08ce79ddb, type: 3}
+  totalTargetBox: 0
 --- !u!114 &616517334
 MonoBehaviour:
   m_ObjectHideFlags: 0

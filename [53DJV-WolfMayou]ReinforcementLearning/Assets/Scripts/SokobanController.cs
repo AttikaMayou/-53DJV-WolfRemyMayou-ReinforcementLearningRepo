@@ -19,8 +19,12 @@ public class SokobanController : MonoBehaviour
     [Header("GameObject")]
     [SerializeField] public GameObject crate;
     [SerializeField] public GameObject wall;
+    [SerializeField] public GameObject worldLimit;
 
     private int playerStrokeNumber = 0;
+    [Header("Game Data")]
+    [SerializeField] public int totalTargetBox = 0;
+    private int filledTargetBox = 0;
     private bool gameIsFinished = false;
 
     public enum SokobanIntent
@@ -37,6 +41,7 @@ public class SokobanController : MonoBehaviour
         grid.gridWidth = 4;
         grid.gridHeight = 4;
         grid.Sokoban();
+        Debug.Log("totalTargetBox = " + totalTargetBox);
     }
 
     private void Update()
@@ -60,15 +65,27 @@ public class SokobanController : MonoBehaviour
     }
 
     // Crate hit a target box ?
-    private bool crateHitTargetBox()
+    private bool crateHitTargetBox(Vector3 position)
     {
+        int x = (int)position.x;
+        int z = (int)position.z;
+        if (grid.grid[z][x].cellSokobanType == Cell.CellSokobanType.CrateTarget)
+        {
+            Debug.Log("La caisse à touché une cible.");
+            filledTargetBox++;
+            CheckVictory();
+            return true;
+        }
         return false;
     }
 
     // Check if all targets boxes have a crate
     private void CheckVictory()
     {
-
+        if (filledTargetBox == totalTargetBox)
+        {
+            Debug.Log("Partie gagnée en " + playerStrokeNumber + " coups.");
+        }
     }
 
     // Check Collision With Player
@@ -118,6 +135,10 @@ public class SokobanController : MonoBehaviour
                         {
                             Debug.Log("Caisse déplacé.");
                             crate.transform.position += direction;
+                            Debug.Log("Vector3 : " + crate.transform.position);
+                            if (crateHitTargetBox(crate.transform.position))
+                            {
+                            }
                             return true;
                         }
                         else
@@ -131,6 +152,10 @@ public class SokobanController : MonoBehaviour
                 {
                     Debug.Log("Pas d'obstacle je déplace la caisse.");
                     crate.transform.position += direction;
+                    Debug.Log("Vector3 : " + crate.transform.position);
+                    if (crateHitTargetBox(crate.transform.position))
+                    {
+                    }
                     return true;
                 }
             }
@@ -145,6 +170,7 @@ public class SokobanController : MonoBehaviour
         if (_player.transform.position.z < grid.gridHeight - 1 && checkCollision(_player.transform.position, Vector3.forward))
         {
             _player.transform.position += Vector3.forward;
+            playerStrokeNumber++;
         }
     }
 
@@ -153,6 +179,7 @@ public class SokobanController : MonoBehaviour
         if (_player.transform.position.z > 0 && checkCollision(_player.transform.position, - Vector3.forward))
         {
             _player.transform.position -= Vector3.forward;
+            playerStrokeNumber++;
         }
     }
 
@@ -161,6 +188,7 @@ public class SokobanController : MonoBehaviour
         if (_player.transform.position.x > 0 && checkCollision(_player.transform.position, Vector3.left))
         {
             _player.transform.position += Vector3.left;
+            playerStrokeNumber++;
         }
     }
 
@@ -169,6 +197,7 @@ public class SokobanController : MonoBehaviour
         if (_player.transform.position.x < grid.gridWidth - 1 && checkCollision(_player.transform.position, -Vector3.left))
         {
             _player.transform.position -= Vector3.left;
+            playerStrokeNumber++;
         }
     }
 }

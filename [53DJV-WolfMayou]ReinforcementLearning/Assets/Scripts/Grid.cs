@@ -177,6 +177,7 @@ public class Grid : MonoBehaviour
     {
         grid[z][x].cellSokobanType = Cell.CellSokobanType.CrateTarget;
         grid[z][x].cellObject.GetComponent<MeshRenderer>().material = sokobanController.targetBoxGridMaterial;
+        sokobanController.totalTargetBox++;
     }
 
     private void createWall(int x, int z)
@@ -190,7 +191,7 @@ public class Grid : MonoBehaviour
 
     private void createWorldLimit(int x, int z)
     {
-        GameObject wall = Instantiate(sokobanController.wall, new Vector3(x, 1.0f, z), Quaternion.identity);
+        GameObject wall = Instantiate(sokobanController.worldLimit, new Vector3(x, 1.0f, z), Quaternion.identity);
         wall.transform.SetParent(this.transform);
         wall.tag = "Wall";
     }
