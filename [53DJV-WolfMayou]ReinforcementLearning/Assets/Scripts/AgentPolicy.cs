@@ -52,10 +52,10 @@ public class AgentPolicy : MonoBehaviour
     public void FollowPath()
     {
         int iter = 0;
-        while (gridWorldController._player.transform.position-Vector3.up*0.5f != gridWorldController.grid.endPos)
+        while (gridWorldController.player.transform.position-Vector3.up*0.5f != gridWorldController.grid.endPos)
         {
-            Debug.Log(gridWorldController._player.transform.position);
-            State currentState = GetStateFromPos(gridWorldController._player.transform.position-Vector3.up*0.5f);
+            Debug.Log(gridWorldController.player.transform.position);
+            State currentState = GetStateFromPos(gridWorldController.player.transform.position-Vector3.up*0.5f);
             switch (currentState.gridWorldPolicy)
             {
                 case Intent.Down:

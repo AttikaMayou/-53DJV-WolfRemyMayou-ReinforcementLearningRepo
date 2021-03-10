@@ -109,10 +109,11 @@ public class Grid : MonoBehaviour
                 grid[i][j] = new Cell {cellObject = Instantiate(gridPrefab, new Vector3(i, 0, j), Quaternion.identity)};
                 grid[i][j].cellObject.transform.SetParent(this.transform);
                 grid[i][j].cellTicTacToeType = Cell.CellTicTacToeType.Neutral;
+                GameObject debugObj = Instantiate(valueObject, new Vector3(i, 0.5f, j), Quaternion.Euler(90, 0, 0));
+                debugObj.GetComponent<TextMesh>().text = "(" + i + " ," + j + ")";
+                debugObj.transform.SetParent(debuggerManager.transform);
             }
         }
-        
-            
     }
 
     public void Sokoban()
@@ -131,8 +132,7 @@ public class Grid : MonoBehaviour
             grid[i] = new Cell[gridWidth];
             for (int j = 0; j < gridWidth; ++j)
             {
-                grid[i][j] = new Cell();
-                grid[i][j].cellObject = Instantiate(gridPrefab, new Vector3(j, 0, i), Quaternion.identity);
+                grid[i][j] = new Cell {cellObject = Instantiate(gridPrefab, new Vector3(i, 0, j), Quaternion.identity)};
                 grid[i][j].cellObject.transform.SetParent(this.transform);
                 grid[i][j].cellSokobanType = Cell.CellSokobanType.Empty;
                 grid[i][j].cellObject.GetComponent<MeshRenderer>().material = sokobanController.emptyMaterial;
@@ -141,102 +141,102 @@ public class Grid : MonoBehaviour
 
         if (false)
         {
-            loadLevel1();
+            LoadLevel1();
         }
         else
         {
-            loadLevel2();
+            LoadLevel2();
         }
     }
 
     // Sokoban Level 1
-    private void loadLevel1()
+    private void LoadLevel1()
     {
         // Set Player Start
         int x = 0;
         int z = 0;
-        grid[z][x].cellSokobanType = Cell.CellSokobanType.Start;
-        sokobanController._player = Instantiate(sokobanController.playerPrefab, startPos + new Vector3(x, 1.0f, z), Quaternion.identity);
-        sokobanController._player.transform.SetParent(this.transform);
+        grid[x][z].cellSokobanType = Cell.CellSokobanType.Start;
+        sokobanController.player = Instantiate(sokobanController.playerPrefab, startPos + new Vector3(x, 1.0f, z), Quaternion.identity);
+        sokobanController.player.transform.SetParent(this.transform);
 
         // Set Crates
-        createCrate(3, 1);
+        CreateCrate(3, 1);
 
         // Set Targets Boxes
-        createTargetBox(3, 3);
+        CreateTargetBox(3, 3);
 
         // Set Walls
-        createWall(0, 1);
-        createWall(1, 1);
+        CreateWall(0, 1);
+        CreateWall(1, 1);
 
         // Set World Limit
         for (int i = 0; i < gridHeight; ++i)
         {
-            createWorldLimit(gridHeight, i);
-            createWorldLimit(-1, i);
+            CreateWorldLimit(gridHeight, i);
+            CreateWorldLimit(-1, i);
 
-            createWorldLimit(i, gridHeight);
-            createWorldLimit(i, -1);
+            CreateWorldLimit(i, gridHeight);
+            CreateWorldLimit(i, -1);
         }
     }
 
     // Sokoban Level 2
-    private void loadLevel2()
+    private void LoadLevel2()
     {
         // Set Player Start
         int x = 0;
         int z = 3;
-        grid[z][x].cellSokobanType = Cell.CellSokobanType.Start;
-        sokobanController._player = Instantiate(sokobanController.playerPrefab, startPos + new Vector3(x, 1.0f, z), Quaternion.identity);
-        sokobanController._player.transform.SetParent(this.transform);
+        grid[x][z].cellSokobanType = Cell.CellSokobanType.Start;
+        sokobanController.player = Instantiate(sokobanController.playerPrefab, startPos + new Vector3(x, 1.0f, z), Quaternion.identity);
+        sokobanController.player.transform.SetParent(this.transform);
 
         // Set Crates
-        createCrate(3, 1);
+        CreateCrate(3, 1);
 
         // Set Targets Boxes
-        createTargetBox(3, 3);
+        CreateTargetBox(3, 3);
 
         // Set Walls
-        createWall(0, 1);
-        createWall(1, 1);
+        CreateWall(0, 1);
+        CreateWall(1, 1);
 
         // Set World Limit
         for (int i = 0; i < gridHeight; ++i)
         {
-            createWorldLimit(gridHeight, i);
-            createWorldLimit(-1, i);
+            CreateWorldLimit(gridHeight, i);
+            CreateWorldLimit(-1, i);
 
-            createWorldLimit(i, gridHeight);
-            createWorldLimit(i, -1);
+            CreateWorldLimit(i, gridHeight);
+            CreateWorldLimit(i, -1);
         }
     }
 
-    private void createCrate(int x, int z)
+    private void CreateCrate(int x, int z)
     {
-        grid[z][x].cellSokobanType = Cell.CellSokobanType.Crate;
+        grid[x][z].cellSokobanType = Cell.CellSokobanType.Crate;
         GameObject crate = Instantiate(sokobanController.crate, new Vector3(x, 1.0f, z), Quaternion.identity);
         crate.transform.SetParent(this.transform);
         crate.tag = "Crate";
-        grid[z][x].cellObject.GetComponent<MeshRenderer>().material = sokobanController.crateMaterial;
+        grid[x][z].cellObject.GetComponent<MeshRenderer>().material = sokobanController.crateMaterial;
     }
 
-    private void createTargetBox(int x, int z)
+    private void CreateTargetBox(int x, int z)
     {
-        grid[z][x].cellSokobanType = Cell.CellSokobanType.CrateTarget;
-        grid[z][x].cellObject.GetComponent<MeshRenderer>().material = sokobanController.targetBoxMaterial;
+        grid[x][z].cellSokobanType = Cell.CellSokobanType.CrateTarget;
+        grid[x][z].cellObject.GetComponent<MeshRenderer>().material = sokobanController.targetBoxMaterial;
         sokobanController.totalTargetBox++;
     }
 
-    private void createWall(int x, int z)
+    private void CreateWall(int x, int z)
     {
-        grid[z][x].cellSokobanType = Cell.CellSokobanType.Wall;
+        grid[x][z].cellSokobanType = Cell.CellSokobanType.Wall;
         GameObject wall = Instantiate(sokobanController.wall, new Vector3(x, 1.0f, z), Quaternion.identity);
         wall.transform.SetParent(this.transform);
         wall.tag = "Wall";
-        grid[z][x].cellObject.GetComponent<MeshRenderer>().material = sokobanController.wallMaterial;
+        grid[x][z].cellObject.GetComponent<MeshRenderer>().material = sokobanController.wallMaterial;
     }
 
-    private void createWorldLimit(int x, int z)
+    private void CreateWorldLimit(int x, int z)
     {
         GameObject wall = Instantiate(sokobanController.worldLimit, new Vector3(x, 1.0f, z), Quaternion.identity);
         wall.transform.SetParent(this.transform);

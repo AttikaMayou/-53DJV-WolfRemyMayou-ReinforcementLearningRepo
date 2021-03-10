@@ -1,13 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class SokobanController : MonoBehaviour
 {
     [SerializeField] public Grid grid;
 
     [SerializeField] public GameObject playerPrefab;
-    public GameObject _player;
+    public GameObject player;
 
     [Header("Material Color")]
     [SerializeField] public Material emptyMaterial;
@@ -21,11 +22,11 @@ public class SokobanController : MonoBehaviour
     [SerializeField] public GameObject wall;
     [SerializeField] public GameObject worldLimit;
 
-    private int playerStrokeNumber;
+    private int _playerStrokeNumber;
     [Header("Game Data")]
     [SerializeField] public int totalTargetBox;
-    private int filledTargetBox;
-    private bool gameIsFinished;
+    private int _filledTargetBox;
+    private bool _gameIsFinished;
 
     public enum SokobanIntent
     {
@@ -40,17 +41,17 @@ public class SokobanController : MonoBehaviour
         // Set Sokoban Grid Size
         grid.gridWidth = 4;
         grid.gridHeight = 4;
-        resetSokobanGame();
+        ResetSokobanGame();
         grid.Sokoban();
-        Debug.Log("totalTargetBox = " + totalTargetBox);
+        //Debug.Log("totalTargetBox = " + totalTargetBox);
     }
 
-    private void resetSokobanGame()
+    private void ResetSokobanGame()
     {
-        playerStrokeNumber = 0;
+        _playerStrokeNumber = 0;
         totalTargetBox = 0;
-        filledTargetBox = 0;
-        gameIsFinished = false;
+        _filledTargetBox = 0;
+        _gameIsFinished = false;
     }
 
     private void Update()
@@ -83,7 +84,7 @@ public class SokobanController : MonoBehaviour
             Debug.Log("La caisse à touché une cible.");
             // Update Crate Material
             gameObject.GetComponent<MeshRenderer>().material = cratePlacedMaterial;
-            filledTargetBox++;
+            _filledTargetBox++;
             CheckVictory();
             return true;
         }
@@ -93,10 +94,10 @@ public class SokobanController : MonoBehaviour
     // Check if all targets boxes have a crate
     private void CheckVictory()
     {
-        if (filledTargetBox == totalTargetBox)
+        if (_filledTargetBox == totalTargetBox)
         {
-            Debug.Log("Partie gagnée en " + playerStrokeNumber + " coups.");
-            gameIsFinished = true;
+            Debug.Log("Partie gagnée en " + _playerStrokeNumber + " coups.");
+            _gameIsFinished = true;
         }
     }
 
@@ -160,37 +161,37 @@ public class SokobanController : MonoBehaviour
 
     public void UpIntent()
     {
-        if (_player.transform.position.z < grid.gridHeight - 1 && checkCollision(_player.transform.position, Vector3.forward))
+        if (player.transform.position.z < grid.gridHeight - 1 && checkCollision(player.transform.position, Vector3.forward))
         {
-            _player.transform.position += Vector3.forward;
-            playerStrokeNumber++;
+            player.transform.position += Vector3.forward;
+            _playerStrokeNumber++;
         }
     }
 
     public void DownIntent()
     {
-        if (_player.transform.position.z > 0 && checkCollision(_player.transform.position, - Vector3.forward))
+        if (player.transform.position.z > 0 && checkCollision(player.transform.position, - Vector3.forward))
         {
-            _player.transform.position -= Vector3.forward;
-            playerStrokeNumber++;
+            player.transform.position -= Vector3.forward;
+            _playerStrokeNumber++;
         }
     }
 
     public void LeftIntent()
     {
-        if (_player.transform.position.x > 0 && checkCollision(_player.transform.position, Vector3.left))
+        if (player.transform.position.x > 0 && checkCollision(player.transform.position, Vector3.left))
         {
-            _player.transform.position += Vector3.left;
-            playerStrokeNumber++;
+            player.transform.position += Vector3.left;
+            _playerStrokeNumber++;
         }
     }
 
     public void RightIntent()
     {
-        if (_player.transform.position.x < grid.gridWidth - 1 && checkCollision(_player.transform.position, - Vector3.left))
+        if (player.transform.position.x < grid.gridWidth - 1 && checkCollision(player.transform.position, - Vector3.left))
         {
-            _player.transform.position -= Vector3.left;
-            playerStrokeNumber++;
+            player.transform.position -= Vector3.left;
+            _playerStrokeNumber++;
         }
     }
 }
