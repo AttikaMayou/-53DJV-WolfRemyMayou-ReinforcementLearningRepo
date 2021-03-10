@@ -139,18 +139,10 @@ public class Grid : MonoBehaviour
         }
 
         // Set Player Start
-        int endX, endY;
-        var startX = Random.Range(0, gridWidth);
-        var startY = Random.Range(0, gridHeight);
-        startPos = new Vector3(startX, 0.0f, startY);
-        do
-        {
-            endX = Random.Range(0, gridWidth);
-            endY = Random.Range(0, gridHeight);
-        } while (endX == startX && endY == startY);
-
-        grid[startX][startY].cellSokobanType = Cell.CellSokobanType.Start;
-        grid[startX][startY].cellObject.GetComponent<MeshRenderer>().material = gridMaterials[(int)Cell.CellGridWorldType.Start];
+        grid[0][0].cellSokobanType = Cell.CellSokobanType.Start;
+        grid[0][0].cellObject.GetComponent<MeshRenderer>().material = gridMaterials[(int)Cell.CellGridWorldType.Start];
+        sokobanController._player = Instantiate(sokobanController.playerPrefab, startPos + new Vector3(0, 0.5f, 0), Quaternion.identity);
+        sokobanController._player.transform.SetParent(this.transform);
 
         // Set Crates
 

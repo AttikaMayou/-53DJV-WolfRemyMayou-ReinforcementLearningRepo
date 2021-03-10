@@ -33,8 +33,6 @@ public class SokobanController : MonoBehaviour
         grid.gridWidth = 4;
         grid.gridHeight = 4;
         grid.Sokoban();
-        _player = Instantiate(playerPrefab, grid.startPos + new Vector3(0, 0.5f, 0), Quaternion.identity);
-        _player.transform.SetParent(this.transform);
     }
 
     public void UpIntent()
