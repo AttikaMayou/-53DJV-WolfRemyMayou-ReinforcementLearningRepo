@@ -13,5 +13,4 @@ public class State
 
     public Vector3 currentPlayerPos;
     public Cell[][] currentGrid;
-
 }

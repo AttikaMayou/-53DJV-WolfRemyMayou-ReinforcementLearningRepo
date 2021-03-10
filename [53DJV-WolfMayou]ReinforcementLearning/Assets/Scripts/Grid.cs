@@ -21,6 +21,13 @@ public class Grid : MonoBehaviour
     public Vector3 endPos;
     public bool hasBeenInitialized = false;
 
+    private SokobanController sokobanController;
+
+    private void Awake()
+    {
+        sokobanController = GetComponent<SokobanController>();
+    }
+
     public void GridWorld()
     {
         debuggerManager.ClearIntents();
@@ -142,5 +149,6 @@ public class Grid : MonoBehaviour
         } while (endX == startX && endY == startY);
 
         grid[startX][startY].cellSokobanType = Cell.CellSokobanType.Start;
+        grid[startX][startY].cellObject.GetComponent<MeshRenderer>().material = gridMaterials[(int)Cell.CellGridWorldType.Start];
     }
 }

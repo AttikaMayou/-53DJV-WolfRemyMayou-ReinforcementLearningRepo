@@ -35,7 +35,6 @@ public class SokobanController : MonoBehaviour
         grid.Sokoban();
         _player = Instantiate(playerPrefab, grid.startPos + new Vector3(0, 0.5f, 0), Quaternion.identity);
         _player.transform.SetParent(this.transform);
-        grid.grid[(int)grid.startPos.z][(int)grid.startPos.x].cellObject.GetComponent<MeshRenderer>().material = emptyGridMaterial;
     }
 
     public void UpIntent()
