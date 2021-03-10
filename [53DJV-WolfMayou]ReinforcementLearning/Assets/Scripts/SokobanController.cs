@@ -60,8 +60,9 @@ public class SokobanController : MonoBehaviour
     }
 
     // Check Collision With Player
-    private bool checkCollision(Vector3 targetPosition)
+    private bool checkCollision(Vector3 currentPosition, Vector3 direction)
     {
+        Vector3 targetPosition = currentPosition + direction;
         int x = (int)targetPosition.x;
         int z = (int)targetPosition.z;
 
@@ -79,10 +80,14 @@ public class SokobanController : MonoBehaviour
 
             // Get the crate
             RaycastHit hit;
-            if (Physics.Raycast(_player.transform.position, targetPosition, out hit, Mathf.Infinity))
+            if (Physics.Raycast(currentPosition, direction, out hit, Mathf.Infinity))
             {
+                Debug.Log("Caisse hit.");
+
                 if (hit.collider.gameObject.tag == "Crate")
                 {
+                    Debug.Log("Caisse correcte tag.");
+
                     // Can i move the crate
                     if (true)
                     {
@@ -102,8 +107,7 @@ public class SokobanController : MonoBehaviour
 
     public void UpIntent()
     {
-        Vector3 targetPosition = _player.transform.position + Vector3.forward;
-        if (_player.transform.position.z < grid.gridHeight - 1 && checkCollision(targetPosition))
+        if (_player.transform.position.z < grid.gridHeight - 1 && checkCollision(_player.transform.position, Vector3.forward))
         {
             _player.transform.position += Vector3.forward;
         }
@@ -111,8 +115,7 @@ public class SokobanController : MonoBehaviour
 
     public void DownIntent()
     {
-        Vector3 targetPosition = _player.transform.position - Vector3.forward;
-        if (_player.transform.position.z > 0 && checkCollision(targetPosition))
+        if (_player.transform.position.z > 0 && checkCollision(_player.transform.position, - Vector3.forward))
         {
             _player.transform.position -= Vector3.forward;
         }
@@ -120,8 +123,7 @@ public class SokobanController : MonoBehaviour
 
     public void LeftIntent()
     {
-        Vector3 targetPosition = _player.transform.position + Vector3.left;
-        if (_player.transform.position.x > 0 && checkCollision(targetPosition))
+        if (_player.transform.position.x > 0 && checkCollision(_player.transform.position, Vector3.left))
         {
             _player.transform.position += Vector3.left;
         }
@@ -129,8 +131,7 @@ public class SokobanController : MonoBehaviour
 
     public void RightIntent()
     {
-        Vector3 targetPosition = _player.transform.position - Vector3.left;
-        if (_player.transform.position.x < grid.gridWidth - 1 && checkCollision(targetPosition))
+        if (_player.transform.position.x < grid.gridWidth - 1 && checkCollision(_player.transform.position, -Vector3.left))
         {
             _player.transform.position -= Vector3.left;
         }
