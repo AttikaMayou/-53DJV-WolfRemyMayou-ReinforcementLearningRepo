@@ -21,11 +21,11 @@ public class SokobanController : MonoBehaviour
     [SerializeField] public GameObject wall;
     [SerializeField] public GameObject worldLimit;
 
-    private int playerStrokeNumber = 0;
+    private int playerStrokeNumber;
     [Header("Game Data")]
-    [SerializeField] public int totalTargetBox = 0;
-    private int filledTargetBox = 0;
-    private bool gameIsFinished = false;
+    [SerializeField] public int totalTargetBox;
+    private int filledTargetBox;
+    private bool gameIsFinished;
 
     public enum SokobanIntent
     {
@@ -40,8 +40,17 @@ public class SokobanController : MonoBehaviour
         // Set Sokoban Grid Size
         grid.gridWidth = 4;
         grid.gridHeight = 4;
+        resetSokobanGame();
         grid.Sokoban();
         Debug.Log("totalTargetBox = " + totalTargetBox);
+    }
+
+    private void resetSokobanGame()
+    {
+        playerStrokeNumber = 0;
+        totalTargetBox = 0;
+        filledTargetBox = 0;
+        gameIsFinished = false;
     }
 
     private void Update()
@@ -85,6 +94,7 @@ public class SokobanController : MonoBehaviour
         if (filledTargetBox == totalTargetBox)
         {
             Debug.Log("Partie gagnée en " + playerStrokeNumber + " coups.");
+            gameIsFinished = true;
         }
     }
 
@@ -112,7 +122,7 @@ public class SokobanController : MonoBehaviour
             // If Crate
             if (hit.collider.gameObject.tag == "Crate")
             {
-                Debug.Log("Hit a le tag Crate.");
+                Debug.Log("Une caisse est touché.");
                 GameObject crate = hit.collider.gameObject;
 
                 // Can i move the crate
@@ -120,32 +130,16 @@ public class SokobanController : MonoBehaviour
                 {
                     if (hit.collider.gameObject.tag == "Wall")
                     {
-                        Debug.Log("Hit a le tag Wall.");
-                        Debug.Log("Impossible de déplacer la caisse dans un mur.");
-                        Debug.Log(hit.collider.gameObject);
+                        Debug.Log("Un mur bloque le chemin pour avancer.");
                         return false;
                     }
                     else
                     {
-                        Debug.Log("Pas de mur en obstacle je déplace la caisse.");
-                        if ((crate.transform.position += direction).z < grid.gridHeight ||
-                            (crate.transform.position += direction).z > 1 ||
-                            (crate.transform.position += direction).x > 1 ||
-                            (crate.transform.position += direction).x < grid.gridWidth)
-                        {
-                            Debug.Log("Caisse déplacé.");
-                            crate.transform.position += direction;
-                            Debug.Log("Vector3 : " + crate.transform.position);
-                            if (crateHitTargetBox(crate.transform.position))
-                            {
-                            }
-                            return true;
-                        }
-                        else
-                        {
-                            Debug.Log("Impossible de déplacer la caisse hors de la carte.");
-                            return false;
-                        }
+                        Debug.Log("Pas d'obstacle je déplace la caisse.");
+                        crate.transform.position += direction;
+                        Debug.Log("Vector3 : " + crate.transform.position);
+                        crateHitTargetBox(crate.transform.position);
+                        return true;
                     }
                 }
                 else
@@ -153,13 +147,10 @@ public class SokobanController : MonoBehaviour
                     Debug.Log("Pas d'obstacle je déplace la caisse.");
                     crate.transform.position += direction;
                     Debug.Log("Vector3 : " + crate.transform.position);
-                    if (crateHitTargetBox(crate.transform.position))
-                    {
-                    }
+                    crateHitTargetBox(crate.transform.position);
                     return true;
                 }
             }
-
         }
 
         return true;
