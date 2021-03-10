@@ -143,15 +143,22 @@ public class Grid : MonoBehaviour
         sokobanController._player = Instantiate(sokobanController.playerPrefab, startPos + new Vector3(0, 0.5f, 0), Quaternion.identity);
         sokobanController._player.transform.SetParent(this.transform);
 
+        int x = 0;
+        int z = 0;
         // Set Crates
-        int x = 1;
-        int z = 1;
+        x = 1;
+        z = 1;
         grid[x][z].cellSokobanType = Cell.CellSokobanType.Crate;
-        sokobanController._player = Instantiate(sokobanController.crate, new Vector3(x, 0.5f, z), Quaternion.identity);
+        Instantiate(sokobanController.crate, new Vector3(x, 0.5f, z), Quaternion.identity);
         grid[x][z].cellObject.GetComponent<MeshRenderer>().material = sokobanController.crateGridMaterial;
 
         // Set Targets Boxes
 
         // Set Walls
+        x = 0;
+        z = 1;
+        grid[x][z].cellSokobanType = Cell.CellSokobanType.Wall;
+        Instantiate(sokobanController.wall, new Vector3(x, 0.5f, z), Quaternion.identity);
+        grid[x][z].cellObject.GetComponent<MeshRenderer>().material = sokobanController.wallGridMaterial;
     }
 }
