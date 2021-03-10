@@ -119,11 +119,11 @@ public class TicTacToeController : MonoBehaviour
         }
     }
 
-    private bool GridIsEmpty(Vector3 position)
+    public bool GridIsEmpty(Vector3 position, Cell[][] currentGrid)
     {
         int x = (int)position.x;
         int z = (int)position.z;
-        if (grid.grid[z][x].cellTicTacToeType == Cell.CellTicTacToeType.Neutral)
+        if (currentGrid[z][x].cellTicTacToeType == Cell.CellTicTacToeType.Neutral)
         {
             return true;
         }
@@ -133,7 +133,7 @@ public class TicTacToeController : MonoBehaviour
 
     private bool Place(GameObject prefabSign, Vector3 position, Material team, Cell.CellTicTacToeType cellType, bool simulation = false)
     {
-        if (GridIsEmpty(position))
+        if (GridIsEmpty(position,grid.grid))
         {
             if (!simulation)
             { 
@@ -172,7 +172,7 @@ public class TicTacToeController : MonoBehaviour
         {
             for (int j = 0; j < 3; ++j)
             {
-                if (!GridIsEmpty(new Vector3(i, .5f, j)))
+                if (!GridIsEmpty(new Vector3(i, .5f, j),grid.grid))
                 {
                     ++count;
                 }

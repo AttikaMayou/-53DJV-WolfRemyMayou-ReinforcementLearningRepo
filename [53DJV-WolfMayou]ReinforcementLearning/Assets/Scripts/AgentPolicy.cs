@@ -196,26 +196,7 @@ public class AgentPolicy : MonoBehaviour
             }
         }
         
-        Debug.Log("maxValue : " + max);
         return bestGridWorldIntent;
-    }
-
-    public float GetBestValue(State currentState)
-    {
-        float max = float.MinValue;
-        for (int i = 0; i < 4; ++i)
-        {
-            if (CheckIntent(currentState, (GridWorldController.GridWorldIntent) i))
-            {
-                State tempState = GetNextState(currentState, (GridWorldController.GridWorldIntent) i);
-                if ( tempState.stateValue > max)
-                {
-                    max = tempState.stateValue;
-                }
-            }
-        }
-        Debug.Log("maxValue : " + max);
-        return max;
     }
 
     public void InitializeValueIteration()
