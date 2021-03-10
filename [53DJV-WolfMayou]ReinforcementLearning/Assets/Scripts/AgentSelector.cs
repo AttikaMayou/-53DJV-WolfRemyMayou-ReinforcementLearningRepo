@@ -1,9 +1,12 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 
 public class AgentSelector : MonoBehaviour
 {
     [SerializeField] private AgentPolicy policyAgent;
     [SerializeField] private AgentMonteCarlo monteCarloAgent;
+
+    [SerializeField] private Toggle stepByStep;
 
     public enum AgentType
     {
@@ -32,7 +35,7 @@ public class AgentSelector : MonoBehaviour
         {
             case AgentType.PolicyIteration:
             case AgentType.ValueIteration:
-                policyAgent.LaunchAgent(_type);
+                policyAgent.LaunchAgent(_type, stepByStep.isOn);
                 break;
             case AgentType.MonteCarloES:
             case AgentType.MonteCarloESEvery:

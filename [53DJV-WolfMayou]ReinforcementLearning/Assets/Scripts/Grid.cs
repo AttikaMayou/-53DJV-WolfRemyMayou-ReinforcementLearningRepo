@@ -15,10 +15,11 @@ public class Grid : MonoBehaviour
     [SerializeField] private List<Material> gridMaterials;
 
     public GameObject valueObject;
-    [SerializeField] private DebuggerManager debuggerManager;
+    public DebuggerManager debuggerManager;
 
     public Vector3 startPos;
     public Vector3 endPos;
+    public bool hasBeenInitialized = false;
     
     public void GridWorld()
     {
@@ -27,7 +28,9 @@ public class Grid : MonoBehaviour
         {
             Destroy(child.gameObject);
         }
-        
+
+        hasBeenInitialized = false;
+
         grid = new Cell[gridHeight][];
 
         for (int i = 0; i < gridHeight; ++i)
