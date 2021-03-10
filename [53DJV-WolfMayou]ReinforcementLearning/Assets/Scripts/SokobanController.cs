@@ -73,6 +73,29 @@ public class SokobanController : MonoBehaviour
         }
 
         // If Crate
+        if (grid.grid[z][x].cellSokobanType == Cell.CellSokobanType.Crate)
+        {
+            Debug.Log("Une caisse est sur le chemin.");
+
+            // Get the crate
+            RaycastHit hit;
+            if (Physics.Raycast(_player.transform.position, targetPosition, out hit, Mathf.Infinity))
+            {
+                if (hit.collider.gameObject.tag == "Crate")
+                {
+                    // Can i move the crate
+                    if (true)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        Debug.Log("Impossible de déplacer la caisse.");
+                        return false;
+                    }
+                }
+            }
+        }
 
         return true;
     }

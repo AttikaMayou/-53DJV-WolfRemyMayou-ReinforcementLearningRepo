@@ -159,6 +159,7 @@ public class Grid : MonoBehaviour
         grid[z][x].cellSokobanType = Cell.CellSokobanType.Crate;
         GameObject crate = Instantiate(sokobanController.crate, new Vector3(x, 0.5f, z), Quaternion.identity);
         crate.transform.SetParent(this.transform);
+        crate.tag = "Crate";
         grid[z][x].cellObject.GetComponent<MeshRenderer>().material = sokobanController.crateGridMaterial;
     }
 
