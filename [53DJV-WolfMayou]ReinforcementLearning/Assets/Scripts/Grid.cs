@@ -152,6 +152,16 @@ public class Grid : MonoBehaviour
         // Set Walls
         createWall(0, 1);
         createWall(1, 1);
+
+        // Set World Limit
+        for (int i = 0; i < gridHeight; ++i)
+        {
+            createWorldLimit(gridHeight, i);
+            createWorldLimit(-1, i);
+
+            createWorldLimit(i, gridHeight);
+            createWorldLimit(i, -1);
+        }
     }
 
     private void createCrate(int x, int z)
@@ -176,5 +186,12 @@ public class Grid : MonoBehaviour
         wall.transform.SetParent(this.transform);
         wall.tag = "Wall";
         grid[z][x].cellObject.GetComponent<MeshRenderer>().material = sokobanController.wallGridMaterial;
+    }
+
+    private void createWorldLimit(int x, int z)
+    {
+        GameObject wall = Instantiate(sokobanController.wall, new Vector3(x, 1.0f, z), Quaternion.identity);
+        wall.transform.SetParent(this.transform);
+        wall.tag = "Wall";
     }
 }

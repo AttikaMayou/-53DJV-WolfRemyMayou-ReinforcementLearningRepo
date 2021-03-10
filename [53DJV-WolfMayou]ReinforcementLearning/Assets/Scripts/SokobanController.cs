@@ -117,7 +117,7 @@ public class SokobanController : MonoBehaviour
                                 Debug.Log("Impossible de déplacer la caisse hors de la carte.");
                                 return false;
                             }
-                        }                      
+                        }
                     }
                     else
                     {
