@@ -138,9 +138,55 @@ public class Grid : MonoBehaviour
             }
         }
 
+        if (false)
+        {
+            loadLevel1();
+        }
+        else
+        {
+            loadLevel2();
+        }
+    }
+
+    // Sokoban Level 1
+    private void loadLevel1()
+    {
         // Set Player Start
-        grid[0][0].cellSokobanType = Cell.CellSokobanType.Start;
-        sokobanController._player = Instantiate(sokobanController.playerPrefab, startPos + new Vector3(0, 1.0f, 0), Quaternion.identity);
+        int x = 0;
+        int z = 0;
+        grid[z][x].cellSokobanType = Cell.CellSokobanType.Start;
+        sokobanController._player = Instantiate(sokobanController.playerPrefab, startPos + new Vector3(x, 1.0f, z), Quaternion.identity);
+        sokobanController._player.transform.SetParent(this.transform);
+
+        // Set Crates
+        createCrate(3, 1);
+
+        // Set Targets Boxes
+        createTargetBox(3, 3);
+
+        // Set Walls
+        createWall(0, 1);
+        createWall(1, 1);
+
+        // Set World Limit
+        for (int i = 0; i < gridHeight; ++i)
+        {
+            createWorldLimit(gridHeight, i);
+            createWorldLimit(-1, i);
+
+            createWorldLimit(i, gridHeight);
+            createWorldLimit(i, -1);
+        }
+    }
+
+    // Sokoban Level 2
+    private void loadLevel2()
+    {
+        // Set Player Start
+        int x = 0;
+        int z = 3;
+        grid[z][x].cellSokobanType = Cell.CellSokobanType.Start;
+        sokobanController._player = Instantiate(sokobanController.playerPrefab, startPos + new Vector3(x, 1.0f, z), Quaternion.identity);
         sokobanController._player.transform.SetParent(this.transform);
 
         // Set Crates

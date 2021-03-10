@@ -185,7 +185,7 @@ public class SokobanController : MonoBehaviour
 
     public void RightIntent()
     {
-        if (_player.transform.position.x < grid.gridWidth - 1 && checkCollision(_player.transform.position, -Vector3.left))
+        if (_player.transform.position.x < grid.gridWidth - 1 && checkCollision(_player.transform.position, - Vector3.left))
         {
             _player.transform.position -= Vector3.left;
             playerStrokeNumber++;
