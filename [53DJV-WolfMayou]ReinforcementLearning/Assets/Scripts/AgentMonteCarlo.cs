@@ -20,7 +20,7 @@ public class AgentMonteCarlo : MonoBehaviour
     private List<SAR> _simulatedSARs;
 
     public float Epsilon = 0.8f;
-    private bool hasBeenInitialized;
+    private bool monteCarloInitialized;
 
     public void LaunchAgent(AgentSelector.AgentType algo)
     {
@@ -65,9 +65,9 @@ public class AgentMonteCarlo : MonoBehaviour
     }
     private void OnMouseLeftClick()
     {
-        if (!hasBeenInitialized)
+        if (!monteCarloInitialized)
         {
-            hasBeenInitialized = true;
+            monteCarloInitialized = true;
             InitializeMonteCarlo();
         }
         Vector3 mouse = Input.mousePosition;
@@ -83,24 +83,14 @@ public class AgentMonteCarlo : MonoBehaviour
 
             if (!ticTacToeController._gameIsOver && ticTacToeController.Place(ticTacToeController.cross, new Vector3(x, y, z), ticTacToeController.crossGridMaterial, CellType.Cross))
             {
-                Intent rdmIntent;
-                bool intentValid;
-                int iter = 0;
-                do
-                {
-                    ++iter;
-                    rdmIntent = (Intent) Random.Range(0, 9);
-                    intentValid = ticTacToeController.GridIsEmpty(ticTacToeController.GetPositionFromIntent(rdmIntent),
-                        ticTacToeController.grid.grid);
-                } while (!intentValid && iter < 20);
-                
+
                 State playedState = GetStateFromGrid(ticTacToeController.grid.grid);
                 
                 if (playedState == null)
                 {
                     playedState = new State();
                     playedState.currentGrid = ticTacToeController.grid.grid;
-                    playedState.ticTacToePolicy = rdmIntent;
+                    playedState.ticTacToePolicy = GetRandomValidIntent(ticTacToeController.grid.grid);
                     _allStates.Add(playedState);
                 }
                 MonteCarloPrediction(playedState, 10, false, false);
@@ -109,6 +99,20 @@ public class AgentMonteCarlo : MonoBehaviour
                     ticTacToeController.circleGridMaterial, CellType.Circle);
             }
         }
+    }
+
+    private Intent GetRandomValidIntent(Cell[][] currentGrid)
+    {
+        Intent rdmIntent = Intent.Tile0 ;
+        bool intentValid;
+        int iter = 0;
+        do
+        {
+            ++iter;
+            rdmIntent = (Intent) Random.Range(0, 9);
+            intentValid = ticTacToeController.GridIsEmpty(ticTacToeController.GetPositionFromIntent(rdmIntent), currentGrid);
+        } while (!intentValid && iter < 20);
+        return rdmIntent;
     }
 
     private void MonteCarloPrediction(State currentState, int iteration, bool everyVisit = false, bool onPolicy = false)
@@ -156,7 +160,15 @@ public class AgentMonteCarlo : MonoBehaviour
                 {
                     state.stateValue = state.returnS / state.nS;
                 }
-                currentState.ticTacToePolicy = GetBestIntent(currentState);
+
+                if (Random.Range(0.0f, 1.0f) < Epsilon)
+                {
+                    currentState.ticTacToePolicy = GetRandomValidIntent(currentState.currentGrid);
+                }
+                else
+                {
+                    currentState.ticTacToePolicy = GetBestIntent(currentState);
+                }
             }
         }
         
@@ -166,7 +178,14 @@ public class AgentMonteCarlo : MonoBehaviour
             {
                 state.stateValue = state.returnS / state.nS;
             }
-            currentState.ticTacToePolicy = GetBestIntent(currentState);
+            if (Random.Range(0.0f, 1.0f) < Epsilon)
+            {
+                currentState.ticTacToePolicy = GetRandomValidIntent(currentState.currentGrid);
+            }
+            else
+            {
+                currentState.ticTacToePolicy = GetBestIntent(currentState);
+            }
         }
     }
 
@@ -217,37 +236,42 @@ public class AgentMonteCarlo : MonoBehaviour
     private void SimulateGame(State currentState)
     {
         bool gameOver = false;
+        int security = 0;
+        State tmpState = currentState;
         do
         {
+            ++security;
             SAR newSar = new SAR();
-            if (ticTacToeController.GridIsEmpty(ticTacToeController.GetPositionFromIntent(currentState.ticTacToePolicy), currentState.currentGrid))
+            if (ticTacToeController.GridIsEmpty(ticTacToeController.GetPositionFromIntent(tmpState.ticTacToePolicy), tmpState.currentGrid))
             {
-                newSar.state = GetNextState(currentState, currentState.ticTacToePolicy);
+                newSar.state = GetNextState(tmpState, tmpState.ticTacToePolicy);
             }
             else
             {
-                Intent player1RdmIntent;
-                bool player1IntentValid;
+                Intent rdmIntent;
+                bool intentValid;
                 int iter = 0;
                 do
                 {
                     ++iter;
-                    player1RdmIntent = (Intent) Random.Range(0, 9);
-                    player1IntentValid = ticTacToeController.GridIsEmpty(ticTacToeController.GetPositionFromIntent(player1RdmIntent),currentState.currentGrid);
-                } while (!player1IntentValid && iter < 20);
-                currentState.ticTacToePolicy = player1RdmIntent;
-                newSar.state = GetNextState(currentState, currentState.ticTacToePolicy);
+                    rdmIntent = (Intent) Random.Range(0, 9);
+                    intentValid = ticTacToeController.GridIsEmpty(ticTacToeController.GetPositionFromIntent(rdmIntent),tmpState.currentGrid);
+                } while (!intentValid && iter < 20);
+                tmpState.ticTacToePolicy = rdmIntent;
+                newSar.state = GetNextState(tmpState, tmpState.ticTacToePolicy);
             }
 
             newSar.intent = newSar.state.ticTacToePolicy;
             newSar.reward = GetReward(newSar.state);
-            //Debug.Log(newSar.reward);
+            Debug.Log(newSar.reward);
             _simulatedSARs.Add(newSar);
             if (newSar.reward >= 1000 || newSar.reward <= -500)
             {
                 gameOver = true;
             }
-        } while (!gameOver);
+
+            tmpState = newSar.state;
+        } while (!gameOver && security < 100);
     }
 
     private float GetReward(State currentState)
@@ -334,42 +358,35 @@ public class AgentMonteCarlo : MonoBehaviour
                 break;
         }
 
+        /*for (int i = 0; i < grid.Length; i++)
+        {
+            for (int j = 0; j < grid[0].Length; j++)
+            {
+                Debug.Log(grid[i][j].cellTicTacToeType);
+            }
+        }*/
+
         State nextState = GetStateFromGrid(grid);
         if (nextState!=null)
         {
+            //Debug.Log("pasnew");
             return nextState;
         }
         else
         {
-            Intent rdmIntent;
-            bool intentValid;
-            int iter = 0;
-            do
-            {
-                ++iter;
-                rdmIntent = (Intent) Random.Range(0, 9);
-                intentValid = ticTacToeController.GridIsEmpty(ticTacToeController.GetPositionFromIntent(rdmIntent),grid);
-            } while (!intentValid && iter < 20);
+            //Debug.Log("new");
 
-            Intent player1RdmIntent;
-            bool player1IntentValid;
-            iter = 0;
-            do
+            Intent rdmIntent = GetRandomValidIntent(grid);
+            if (ticTacToeController.GridIsEmpty(ticTacToeController.GetPositionFromIntent(rdmIntent),grid))
             {
-                ++iter;
-                player1RdmIntent = (Intent) Random.Range(0, 9);
-                player1IntentValid = ticTacToeController.GridIsEmpty(ticTacToeController.GetPositionFromIntent(player1RdmIntent),grid);
-            } while (!player1IntentValid && iter < 20);
-
-            if (iter < 20)
-            {
-                Vector3 player1Pos = ticTacToeController.GetPositionFromIntent(player1RdmIntent);
+                Vector3 player1Pos = ticTacToeController.GetPositionFromIntent(rdmIntent);
                 grid[(int) player1Pos.x][(int) player1Pos.z].cellTicTacToeType = CellType.Cross;
+                Debug.Log("cross added");
             }
-            
+
             State newState = new State();
             newState.currentGrid = grid;
-            newState.ticTacToePolicy = rdmIntent;
+            newState.ticTacToePolicy = GetRandomValidIntent(grid);
             _allStates.Add(newState);
             return newState;
         }
@@ -385,7 +402,7 @@ public class AgentMonteCarlo : MonoBehaviour
             {
                 for (int j = 0; j < grid[i].Length; j++)
                 {
-                    if(state.currentGrid[i][j] == grid[i][j])
+                    if(state.currentGrid[i][j].cellTicTacToeType == grid[i][j].cellTicTacToeType)
                         ++same;
                     
                     ++count;
