@@ -31,35 +31,33 @@ public class AgentPolicy : MonoBehaviour
 
         DebugIntents();
         
-        /*int iter = 0;
-        while (gridWorldController.player.transform.position != gridWorldController.grid.endPos)
+        int iter = 0;
+        while (gridWorldController._player.transform.position-Vector3.up*0.5f != gridWorldController.grid.endPos)
         {
-            Debug.Log(gridWorldController.player.transform.position);
-            State currentState = GetStateFromPos(gridWorldController.player.transform.position);
-            Debug.Log(currentState);
-            Debug.Log(currentState.statePolicy);
-            switch (currentState.statePolicy)
+            Debug.Log(gridWorldController._player.transform.position);
+            State currentState = GetStateFromPos(gridWorldController._player.transform.position-Vector3.up*0.5f);
+            switch (currentState.gridWorldPolicy)
             {
-                case Intents.Down:
+                case GridWorldController.GridWorldIntent.Down:
                     gridWorldController.DownIntent();
                     break;
-                case Intents.Up:
+                case GridWorldController.GridWorldIntent.Up:
                     gridWorldController.UpIntent();
                     break;
-                case Intents.Left:
+                case GridWorldController.GridWorldIntent.Left:
                     gridWorldController.LeftIntent();
                     break;
-                case Intents.Right:
+                case GridWorldController.GridWorldIntent.Right:
                     gridWorldController.RightIntent();
                     break;
             }
             ++iter;
-            if (iter > 1000)
+            if (iter > 100)
             {
                 break;
             }
         }
-        Debug.Log("End");*/
+        Debug.Log("End");
     }
     
     public void InitializePolicyIteration()

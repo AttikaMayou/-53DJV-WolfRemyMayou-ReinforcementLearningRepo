@@ -6,7 +6,7 @@ using UnityEngine;
 public class GridWorldController : MonoBehaviour
 {
     [SerializeField] public GameObject playerPrefab;
-    private GameObject _player;
+    public GameObject _player;
     [SerializeField] public Grid grid;
     public GameObject downArrow;
     public GameObject upArrow;
