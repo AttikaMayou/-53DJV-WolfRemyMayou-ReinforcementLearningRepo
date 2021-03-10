@@ -143,22 +143,35 @@ public class Grid : MonoBehaviour
         sokobanController._player = Instantiate(sokobanController.playerPrefab, startPos + new Vector3(0, 0.5f, 0), Quaternion.identity);
         sokobanController._player.transform.SetParent(this.transform);
 
-        int x = 0;
-        int z = 0;
         // Set Crates
-        x = 1;
-        z = 1;
-        grid[x][z].cellSokobanType = Cell.CellSokobanType.Crate;
-        Instantiate(sokobanController.crate, new Vector3(x, 0.5f, z), Quaternion.identity);
-        grid[x][z].cellObject.GetComponent<MeshRenderer>().material = sokobanController.crateGridMaterial;
+        createCrate(3, 2);
 
         // Set Targets Boxes
+        createTargetBox(3, 3);
 
         // Set Walls
-        x = 0;
-        z = 1;
-        grid[x][z].cellSokobanType = Cell.CellSokobanType.Wall;
-        Instantiate(sokobanController.wall, new Vector3(x, 0.5f, z), Quaternion.identity);
-        grid[x][z].cellObject.GetComponent<MeshRenderer>().material = sokobanController.wallGridMaterial;
+        createWall(0, 1);
+    }
+
+    private void createCrate(int x, int z)
+    {
+        grid[z][x].cellSokobanType = Cell.CellSokobanType.Crate;
+        GameObject crate = Instantiate(sokobanController.crate, new Vector3(x, 0.5f, z), Quaternion.identity);
+        crate.transform.SetParent(this.transform);
+        grid[z][x].cellObject.GetComponent<MeshRenderer>().material = sokobanController.crateGridMaterial;
+    }
+
+    private void createTargetBox(int x, int z)
+    {
+        grid[z][x].cellSokobanType = Cell.CellSokobanType.CrateTarget;
+        grid[z][x].cellObject.GetComponent<MeshRenderer>().material = sokobanController.targetBoxGridMaterial;
+    }
+
+    private void createWall(int x, int z)
+    {
+        grid[z][x].cellSokobanType = Cell.CellSokobanType.Wall;
+        GameObject wall = Instantiate(sokobanController.wall, new Vector3(x, 0.5f, z), Quaternion.identity);
+        wall.transform.SetParent(this.transform);
+        grid[z][x].cellObject.GetComponent<MeshRenderer>().material = sokobanController.wallGridMaterial;
     }
 }
