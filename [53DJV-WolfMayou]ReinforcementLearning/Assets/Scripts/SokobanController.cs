@@ -9,8 +9,8 @@ public class SokobanController : MonoBehaviour
     [SerializeField] public GameObject playerPrefab;
     public GameObject _player;
 
-    // Number of strokes
-    private int strokeNumber;
+    // Number of player strokes
+    private int strokeNumber = 0;
     private bool gameIsFinished = false;
 
     public enum SokobanIntent
