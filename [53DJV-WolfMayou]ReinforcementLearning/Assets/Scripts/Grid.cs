@@ -83,7 +83,6 @@ public class Grid : MonoBehaviour
         grid[endX][endY].cellGridWorldType = Cell.CellGridWorldType.End;
         grid[endX][endY].cellObject.GetComponent<MeshRenderer>().material = gridMaterials[(int)Cell.CellGridWorldType.End];
     }
-
     
     public void TicTacToe()
     {
@@ -100,12 +99,13 @@ public class Grid : MonoBehaviour
             grid[i] = new Cell[gridWidth];
             for (int j = 0; j < gridWidth; ++j)
             {
-                grid[i][j] = new Cell();
-                grid[i][j].cellObject = Instantiate(gridPrefab, new Vector3(j, 0, i), Quaternion.identity);
+                grid[i][j] = new Cell {cellObject = Instantiate(gridPrefab, new Vector3(i, 0, j), Quaternion.identity)};
                 grid[i][j].cellObject.transform.SetParent(this.transform);
                 grid[i][j].cellTicTacToeType = Cell.CellTicTacToeType.Neutral;
             }
         }
+        
+            
     }
 
 

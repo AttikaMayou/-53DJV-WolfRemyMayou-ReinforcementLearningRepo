@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class TicTacToeController : MonoBehaviour
 {
@@ -29,7 +30,7 @@ public class TicTacToeController : MonoBehaviour
     }
     
     private bool _isPlayer1Turn = true;
-    public bool _gameIsOver = false;
+    public bool gameIsOver = false;
 
     public void InitTicTacToeGame()
     {
@@ -37,19 +38,14 @@ public class TicTacToeController : MonoBehaviour
         grid.gridWidth = 3;
         grid.gridHeight = 3;
         grid.TicTacToe();
-        _gameIsOver = false;
+        gameIsOver = false;
     }
     
     public bool ProcessIntent(TicTacToeIntent wantedIntent)
     {
-        if (_isPlayer1Turn) return false;
-       
         return Place(circle, GetPositionFromIntent(wantedIntent), circleGridMaterial, Cell.CellTicTacToeType.Circle);
-         
     }
-
-
-
+    
     /*private void OnMouseRightClick()
     {
         Vector3 mouse = Input.mousePosition;
@@ -68,7 +64,7 @@ public class TicTacToeController : MonoBehaviour
     {
         int x = (int)position.x;
         int z = (int)position.z;
-        if (currentGrid[z][x].cellTicTacToeType == Cell.CellTicTacToeType.Neutral)
+        if (currentGrid[x][z].cellTicTacToeType == Cell.CellTicTacToeType.Neutral)
         {
             return true;
         }
@@ -84,48 +80,48 @@ public class TicTacToeController : MonoBehaviour
         {
             case TicTacToeIntent.Tile0:
                 position.x = 0;
-                position.z = 0;
+                position.z = 2;
                 break;
             case TicTacToeIntent.Tile1:
-                position.x = 0;
-                position.z = 1;
+                position.x = 1;
+                position.z = 2;
                 break;
             case TicTacToeIntent.Tile2:
-                position.x = 0;
+                position.x = 2;
                 position.z = 2;
                 break;
             case TicTacToeIntent.Tile3:
-                position.x = 1;
-                position.z = 0;
+                position.x = 0;
+                position.z = 1;
                 break;
             case TicTacToeIntent.Tile4:
                 position.x = 1;
                 position.z = 1;
                 break;
             case TicTacToeIntent.Tile5:
-                position.x = 1;
-                position.z = 2;
-                break;
-            case TicTacToeIntent.Tile6:
-                position.x = 2;
-                position.z = 0;
-                break;
-            case TicTacToeIntent.Tile7:
                 position.x = 2;
                 position.z = 1;
                 break;
+            case TicTacToeIntent.Tile6:
+                position.x = 0;
+                position.z = 0;
+                break;
+            case TicTacToeIntent.Tile7:
+                position.x = 1;
+                position.z = 0;
+                break;
             case TicTacToeIntent.Tile8:
                 position.x = 2;
-                position.z = 2;
+                position.z = 0;
                 break;
         }
-
+        
         return position;
     }
     
     public bool Place(GameObject prefabSign, Vector3 position, Material team, Cell.CellTicTacToeType cellType)
     {
-        if (GridIsEmpty(position,grid.grid))
+        if (GridIsEmpty(position, grid.grid))
         {
             // Change Player Turn
             //_isPlayer1Turn = !_isPlayer1Turn;
@@ -137,10 +133,10 @@ public class TicTacToeController : MonoBehaviour
             sign.transform.SetParent(this.transform);
             
             // Change Grid Material
-            grid.grid[z][x].cellObject.GetComponent<MeshRenderer>().material = team;
+            grid.grid[x][z].cellObject.GetComponent<MeshRenderer>().material = team;
             
             // Set Cell State
-            grid.grid[z][x].cellTicTacToeType = cellType;
+            grid.grid[x][z].cellTicTacToeType = cellType;
             
             //Debug.Log("Set State : " + grid.grid[x][z].state);
             CheckVictory(cellType, grid.grid);
@@ -156,7 +152,7 @@ public class TicTacToeController : MonoBehaviour
             CheckVerticalRows(cellType, currentGrid) ||
             CheckDiagonal(cellType, currentGrid))
         {
-            _gameIsOver = true;
+            gameIsOver = true;
         }
         
         //Check match null
@@ -174,8 +170,8 @@ public class TicTacToeController : MonoBehaviour
 
         if (count == 9)
         {
-            Debug.Log("Match nul !!! Bande de nullos hihihih");
-            _gameIsOver = true;
+            //Debug.Log("Match nul !!! Bande de nullos hihihih");
+            gameIsOver = true;
         }
     }
 
@@ -185,9 +181,9 @@ public class TicTacToeController : MonoBehaviour
 
         for (int x = 0; x < grid.gridHeight; x++)
         {
-            if (currentGrid[0][x].cellTicTacToeType == cellType
-            && currentGrid[1][x].cellTicTacToeType == cellType 
-            && currentGrid[2][x].cellTicTacToeType == cellType)
+            if (currentGrid[x][0].cellTicTacToeType == cellType
+            && currentGrid[x][1].cellTicTacToeType == cellType 
+            && currentGrid[x][2].cellTicTacToeType == cellType)
             {
                 isVictory = true;
             }
@@ -195,7 +191,7 @@ public class TicTacToeController : MonoBehaviour
 
         if (isVictory)
         {
-            Debug.Log("Partie gagnée sur ligne verticale par " + cellType);
+            //Debug.Log("Partie gagnée sur ligne verticale par " + cellType);
         }
 
         return isVictory;
@@ -207,9 +203,9 @@ public class TicTacToeController : MonoBehaviour
 
         for (int x = 0; x < grid.gridWidth; x++)
         {
-            if (currentGrid[x][0].cellTicTacToeType == cellType
-            && currentGrid[x][1].cellTicTacToeType == cellType
-            && currentGrid[x][2].cellTicTacToeType == cellType)
+            if (currentGrid[0][x].cellTicTacToeType == cellType
+            && currentGrid[1][x].cellTicTacToeType == cellType
+            && currentGrid[2][x].cellTicTacToeType == cellType)
             {
                 isVictory = true;
             }
@@ -217,7 +213,7 @@ public class TicTacToeController : MonoBehaviour
 
         if (isVictory)
         {
-            Debug.Log("Partie gagnée sur ligne horizontale par " + cellType);
+            //Debug.Log("Partie gagnée sur ligne horizontale par " + cellType);
         }
         return isVictory;
     }
@@ -233,7 +229,7 @@ public class TicTacToeController : MonoBehaviour
         
         if (isVictory)
         {
-            Debug.Log("Partie gagnée sur une diagonale par " + cellType);
+            //Debug.Log("Partie gagnée sur une diagonale par " + cellType);
         }
         return isVictory;
     }

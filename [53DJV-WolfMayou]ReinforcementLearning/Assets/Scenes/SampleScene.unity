@@ -1781,6 +1781,7 @@ MonoBehaviour:
   circle: {fileID: 1314037438050228, guid: 453b795a99d8e85448d0c9bc874e58b2, type: 3}
   crossGridMaterial: {fileID: 2100000, guid: d46376af6ec0d504da82c3d081f4219b, type: 2}
   circleGridMaterial: {fileID: 2100000, guid: 10b05ba43a1df724fa7368f64e2d0fb7, type: 2}
+  gameIsOver: 0
 --- !u!114 &616517331
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1840,6 +1841,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ticTacToeController: {fileID: 616517330}
+  debuggerManager: {fileID: 462736663}
+  epsilon: 0.5
 --- !u!1 &635025944
 GameObject:
   m_ObjectHideFlags: 0

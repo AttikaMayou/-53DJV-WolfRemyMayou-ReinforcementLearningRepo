@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 using Intent = TicTacToeController.TicTacToeIntent;
@@ -18,10 +16,11 @@ public class AgentMonteCarlo : MonoBehaviour
     [SerializeField] private TicTacToeController ticTacToeController;
     private List<State> _allStates;
     private List<SAR> _simulatedSARs;
+    [SerializeField] private DebuggerManager debuggerManager;
 
-    public float Epsilon = 0.8f;
-    private bool monteCarloInitialized;
-
+    public float epsilon = 0.8f;
+    private bool _monteCarloInitialized;
+    
     public void LaunchAgent(AgentSelector.AgentType algo)
     {
         //InitializeMonteCarlo();
@@ -63,58 +62,70 @@ public class AgentMonteCarlo : MonoBehaviour
             OnMouseLeftClick();
         }
     }
+    
     private void OnMouseLeftClick()
     {
-        if (!monteCarloInitialized)
+        if (!_monteCarloInitialized)
         {
-            monteCarloInitialized = true;
+            _monteCarloInitialized = true;
             InitializeMonteCarlo();
         }
+        
         Vector3 mouse = Input.mousePosition;
         Ray castPoint = Camera.main.ScreenPointToRay(mouse);
         RaycastHit hit;
-        Debug.Log(!ticTacToeController._gameIsOver);
-        if (!ticTacToeController._gameIsOver && Physics.Raycast(castPoint, out hit, Mathf.Infinity))
+        if (!ticTacToeController.gameIsOver && Physics.Raycast(castPoint, out hit, Mathf.Infinity))
         {
             float x = Mathf.Round(hit.point.x);
-            float y = 0.5f;
             float z = Mathf.Round(hit.point.z);
             
-
-            if (!ticTacToeController._gameIsOver && ticTacToeController.Place(ticTacToeController.cross, new Vector3(x, y, z), ticTacToeController.crossGridMaterial, CellType.Cross))
+            if (!ticTacToeController.gameIsOver && ticTacToeController.Place(ticTacToeController.cross, new Vector3(x, 0.5f, z), ticTacToeController.crossGridMaterial, CellType.Cross))
             {
-
                 State playedState = GetStateFromGrid(ticTacToeController.grid.grid);
                 
                 if (playedState == null)
                 {
-                    playedState = new State();
-                    playedState.currentGrid = ticTacToeController.grid.grid;
-                    playedState.ticTacToePolicy = GetRandomValidIntent(ticTacToeController.grid.grid);
+                    playedState = new State
+                    {
+                        currentGrid = ticTacToeController.grid.grid,
+                        ticTacToePolicy = GetRandomValidIntent(ticTacToeController.grid.grid)
+                    };
                     _allStates.Add(playedState);
                 }
-                MonteCarloPrediction(playedState, 10, false, false);
-                ticTacToeController.Place(ticTacToeController.circle,
-                    ticTacToeController.GetPositionFromIntent(playedState.ticTacToePolicy),
-                    ticTacToeController.circleGridMaterial, CellType.Circle);
+                
+                MonteCarloPrediction(playedState, 1000, true, true);
+
+                ticTacToeController.ProcessIntent(playedState.ticTacToePolicy);
             }
         }
     }
+    
 
-    private Intent GetRandomValidIntent(Cell[][] currentGrid)
+    #region MonteCarloAlgorithm
+    
+    private void InitializeMonteCarlo()
     {
-        Intent rdmIntent = Intent.Tile0 ;
-        bool intentValid;
-        int iter = 0;
-        do
+        _allStates = new List<State>();
+        State newState = new State();
+        newState.currentGrid = new Cell[3][];
+        for (int i = 0; i < 3; ++i)
         {
-            ++iter;
-            rdmIntent = (Intent) Random.Range(0, 9);
-            intentValid = ticTacToeController.GridIsEmpty(ticTacToeController.GetPositionFromIntent(rdmIntent), currentGrid);
-        } while (!intentValid && iter < 20);
-        return rdmIntent;
-    }
+            newState.currentGrid[i] = new Cell[3];
+            for (int j = 0; j < 3; j++)
+            {
 
+                newState.currentGrid[i][j] = new Cell {cellTicTacToeType = CellType.Neutral};
+            }
+        }
+
+        //newState.currentGrid[Random.Range(0, 3)][Random.Range(0, 3)].cellTicTacToeType = CellType.Cross; 
+        newState.nS = 0;
+        newState.returnS = 0;
+        newState.ticTacToePolicy = (Intent) Random.Range(0, 9);
+        newState.stateValue = 0;
+        _allStates.Add(newState);
+    }
+    
     private void MonteCarloPrediction(State currentState, int iteration, bool everyVisit = false, bool onPolicy = false)
     {
         //initialisation
@@ -129,10 +140,10 @@ public class AgentMonteCarlo : MonoBehaviour
         {
             _simulatedSARs = new List<SAR>();
             SimulateGame(currentState);
-            float G = 0;
+            float g = 0;
             for (int j = _simulatedSARs.Count-2; j >= 0; --j)
             {
-                G += _simulatedSARs[j + 1].reward;
+                g += _simulatedSARs[j + 1].reward;
                 
                 bool isContained = false;
                 if (!everyVisit)
@@ -149,7 +160,7 @@ public class AgentMonteCarlo : MonoBehaviour
 
                 if (!everyVisit && !isContained  || everyVisit)
                 {
-                    _simulatedSARs[j].state.returnS += G;
+                    _simulatedSARs[j].state.returnS += g;
                     ++_simulatedSARs[j].state.nS;
                 }
             }
@@ -161,14 +172,7 @@ public class AgentMonteCarlo : MonoBehaviour
                     state.stateValue = state.returnS / state.nS;
                 }
 
-                if (Random.Range(0.0f, 1.0f) < Epsilon)
-                {
-                    currentState.ticTacToePolicy = GetRandomValidIntent(currentState.currentGrid);
-                }
-                else
-                {
-                    currentState.ticTacToePolicy = GetBestIntent(currentState);
-                }
+                currentState.ticTacToePolicy = GetBestIntent(currentState);
             }
         }
         
@@ -178,61 +182,12 @@ public class AgentMonteCarlo : MonoBehaviour
             {
                 state.stateValue = state.returnS / state.nS;
             }
-            if (Random.Range(0.0f, 1.0f) < Epsilon)
-            {
-                currentState.ticTacToePolicy = GetRandomValidIntent(currentState.currentGrid);
-            }
-            else
-            {
-                currentState.ticTacToePolicy = GetBestIntent(currentState);
-            }
+           
+            currentState.ticTacToePolicy = GetBestIntent(currentState);
+            
         }
     }
-
-    private Intent GetBestIntent(State currentState)
-    {
-        float max = float.MinValue;
-        Intent bestIntent = currentState.ticTacToePolicy;
-        for (int i = 0; i < 9; ++i)
-        {
-           if (ticTacToeController.GridIsEmpty(ticTacToeController.GetPositionFromIntent((Intent)i), currentState.currentGrid))
-           {
-               State tempState = GetNextState(currentState, (Intent) i);
-               if ( tempState.stateValue > max)
-               {
-                   max = tempState.stateValue;
-                   bestIntent = (Intent) i;
-               }
-           }
-        }
-
-        return bestIntent;
-    }
-
-    private void InitializeMonteCarlo()
-    {
-        _allStates = new List<State>();
-        State newState = new State();
-        newState.currentGrid = new Cell[3][];
-        for (int i = 0; i < 3; ++i)
-        {
-            newState.currentGrid[i] = new Cell[3];
-            for (int j = 0; j < 3; j++)
-            {
-                
-                newState.currentGrid[i][j] = new Cell();
-                newState.currentGrid[i][j].cellTicTacToeType = CellType.Neutral;
-            }
-        }
-
-        newState.currentGrid[Random.Range(0, 3)][Random.Range(0, 3)].cellTicTacToeType = CellType.Cross; 
-        newState.nS = 0;
-        newState.returnS = 0;
-        newState.ticTacToePolicy = (Intent) Random.Range(0, 9);
-        newState.stateValue = 0;
-        _allStates.Add(newState);
-    }
-
+    
     private void SimulateGame(State currentState)
     {
         bool gameOver = false;
@@ -242,28 +197,30 @@ public class AgentMonteCarlo : MonoBehaviour
         {
             ++security;
             SAR newSar = new SAR();
-            if (ticTacToeController.GridIsEmpty(ticTacToeController.GetPositionFromIntent(tmpState.ticTacToePolicy), tmpState.currentGrid))
+            Intent chosenIntent;
+            
+            if (Random.Range(0.0f, 1.0f) < epsilon)
             {
-                newSar.state = GetNextState(tmpState, tmpState.ticTacToePolicy);
+                chosenIntent = GetRandomValidIntent(tmpState.currentGrid);
             }
             else
             {
-                Intent rdmIntent;
-                bool intentValid;
-                int iter = 0;
-                do
-                {
-                    ++iter;
-                    rdmIntent = (Intent) Random.Range(0, 9);
-                    intentValid = ticTacToeController.GridIsEmpty(ticTacToeController.GetPositionFromIntent(rdmIntent),tmpState.currentGrid);
-                } while (!intentValid && iter < 20);
-                tmpState.ticTacToePolicy = rdmIntent;
+                chosenIntent = tmpState.ticTacToePolicy;
+            }
+            
+            if (ticTacToeController.GridIsEmpty(ticTacToeController.GetPositionFromIntent(chosenIntent), tmpState.currentGrid))
+            {
+                newSar.state = GetNextState(tmpState, chosenIntent);
+            }
+            else
+            {
+                tmpState.ticTacToePolicy = GetRandomValidIntent(tmpState.currentGrid);
                 newSar.state = GetNextState(tmpState, tmpState.ticTacToePolicy);
             }
 
             newSar.intent = newSar.state.ticTacToePolicy;
             newSar.reward = GetReward(newSar.state);
-            Debug.Log(newSar.reward);
+            
             _simulatedSARs.Add(newSar);
             if (newSar.reward >= 1000 || newSar.reward <= -500)
             {
@@ -273,7 +230,7 @@ public class AgentMonteCarlo : MonoBehaviour
             tmpState = newSar.state;
         } while (!gameOver && security < 100);
     }
-
+    
     private float GetReward(State currentState)
     {
         int reward = 0;
@@ -290,7 +247,7 @@ public class AgentMonteCarlo : MonoBehaviour
         }
         else
         {
-            reward = 1;
+            reward -= 1;
         }
         
         int count = 0;
@@ -307,56 +264,23 @@ public class AgentMonteCarlo : MonoBehaviour
 
         if (count == 9)
         {
-            Debug.Log("Match nul !!! Bande de nullos hihihih");
+            //Debug.Log("Match nul !!! Bande de nullos hihihih");
             reward -= 500;
         }
         
         return reward;
     }
 
-    public State GetNextState(State currentState, Intent intent)
+    #endregion
+    
+    
+    #region MonteCarloUtils
+
+    private State GetNextState(State currentState, Intent intent)
     {
-        Cell[][] grid = new Cell[currentState.currentGrid.Length][];
-        for (int i = 0; i < currentState.currentGrid.Length; ++i)
-        {
-            grid[i] = new Cell[currentState.currentGrid[0].Length];
-            for (int j = 0; j < currentState.currentGrid[0].Length; j++)
-            {
-                grid[i][j] = new Cell();
-                grid[i][j].cellTicTacToeType = currentState.currentGrid[i][j].cellTicTacToeType;
-            }
-        }
-        
-        switch (intent)
-        {
-            case Intent.Tile0:
-                grid[0][0].cellTicTacToeType = CellType.Circle; 
-                break;
-            case Intent.Tile1:
-                grid[0][1].cellTicTacToeType = CellType.Circle;
-                break;
-            case Intent.Tile2:
-                grid[0][2].cellTicTacToeType = CellType.Circle;
-                break;
-            case Intent.Tile3:
-                grid[1][0].cellTicTacToeType =  CellType.Circle;
-                break;
-            case Intent.Tile4:
-                grid[1][1].cellTicTacToeType = CellType.Circle;
-                break;
-            case Intent.Tile5:
-                grid[1][2].cellTicTacToeType = CellType.Circle;
-                break;
-            case Intent.Tile6:
-                grid[2][0].cellTicTacToeType = CellType.Circle;
-                break;
-            case Intent.Tile7:
-                grid[2][1].cellTicTacToeType = CellType.Circle;
-                break;
-            case Intent.Tile8:
-                grid[2][2].cellTicTacToeType = CellType.Circle;
-                break;
-        }
+        Cell[][] grid = CopyGrid(currentState.currentGrid);
+
+        grid = ApplyIntentToGrid(intent, grid, CellType.Circle);
 
         /*for (int i = 0; i < grid.Length; i++)
         {
@@ -381,7 +305,6 @@ public class AgentMonteCarlo : MonoBehaviour
             {
                 Vector3 player1Pos = ticTacToeController.GetPositionFromIntent(rdmIntent);
                 grid[(int) player1Pos.x][(int) player1Pos.z].cellTicTacToeType = CellType.Cross;
-                Debug.Log("cross added");
             }
 
             State newState = new State();
@@ -391,7 +314,129 @@ public class AgentMonteCarlo : MonoBehaviour
             return newState;
         }
     }
+    
+    private Dictionary<State, float> GetPossibleStatesFromIntent(State currentState, Intent intent)
+    {
+        Dictionary<State, float> possibleStates = new Dictionary<State, float>();
 
+        Cell[][] simulatedGrid = CopyGrid(currentState.currentGrid);
+        simulatedGrid = ApplyIntentToGrid(intent, simulatedGrid, CellType.Circle);
+        
+        int i = 0;
+        int possibilities = 0;
+        for (i = 0; i < 9; i++)
+        {
+            if (ticTacToeController.GridIsEmpty(ticTacToeController.GetPositionFromIntent((Intent) i), simulatedGrid))
+            {
+                ++possibilities;
+            }
+        }
+        
+        for (i = 0; i < 9; i++)
+        {
+            if (ticTacToeController.GridIsEmpty(ticTacToeController.GetPositionFromIntent((Intent) i), simulatedGrid))
+            {
+                
+                Cell[][] copyGrid = CopyGrid(simulatedGrid);
+                copyGrid = ApplyIntentToGrid((Intent) i, copyGrid, CellType.Cross);
+                
+                State possibleState = GetStateFromGrid(copyGrid);
+                if (possibleState == null)
+                {
+                    possibleState = new State()
+                    {
+                        stateValue = 0.0f,
+                        currentGrid = copyGrid,
+                        ticTacToePolicy = GetRandomValidIntent(copyGrid),
+                        nS = 0.0f,
+                        returnS = 0.0f
+                    };
+                }
+
+                possibleStates.Add(possibleState, 1.0f / possibilities);
+            }
+        }
+
+        return possibleStates;
+    }
+    
+    private Intent GetBestIntent(State currentState)
+    {
+        float max = float.MinValue;
+        Intent bestIntent = currentState.ticTacToePolicy;
+        for (int i = 0; i < 9; ++i)
+        {
+            if (ticTacToeController.GridIsEmpty(ticTacToeController.GetPositionFromIntent((Intent)i), currentState.currentGrid))
+            {
+                Dictionary<State, float> possibleStates = GetPossibleStatesFromIntent(currentState, (Intent) i);
+
+                float totalValue = 0;
+                foreach (var possibleState in possibleStates)
+                {
+                    totalValue += possibleState.Key.stateValue * possibleState.Value;
+                }
+                
+                if ( totalValue > max)
+                {
+                    max = totalValue;
+                    bestIntent = (Intent) i;
+                }
+            }
+        }
+
+        return bestIntent;
+    }
+    
+    private Intent GetRandomValidIntent(Cell[][] currentGrid)
+    {
+        Intent rdmIntent = Intent.Tile0 ;
+        bool intentValid;
+        int iter = 0;
+        do
+        {
+            ++iter;
+            rdmIntent = (Intent) Random.Range(0, 9);
+            intentValid = ticTacToeController.GridIsEmpty(ticTacToeController.GetPositionFromIntent(rdmIntent), currentGrid);
+        } while (!intentValid && iter < 20);
+        return rdmIntent;
+    }
+    
+    private Cell[][] ApplyIntentToGrid(Intent intent, Cell[][] grid, CellType type)
+    {
+        switch (intent)
+        {
+            case Intent.Tile0:
+                grid[0][2].cellTicTacToeType = type; 
+                break;
+            case Intent.Tile1:
+                grid[1][2].cellTicTacToeType = type;
+                break;
+            case Intent.Tile2:
+                grid[2][2].cellTicTacToeType = type;
+                break;
+            case Intent.Tile3:
+                grid[0][1].cellTicTacToeType =  type;
+                break;
+            case Intent.Tile4:
+                grid[1][1].cellTicTacToeType = type;
+                break;
+            case Intent.Tile5:
+                grid[2][1].cellTicTacToeType = type;
+                break;
+            case Intent.Tile6:
+                grid[0][0].cellTicTacToeType = type;
+                break;
+            case Intent.Tile7:
+                grid[1][0].cellTicTacToeType = type;
+                break;
+            case Intent.Tile8:
+                grid[2][0].cellTicTacToeType = type;
+                break;
+        }
+        
+        return grid;
+    }
+    
     private State GetStateFromGrid(Cell[][] grid)
     {
         foreach (var state in _allStates)
@@ -414,4 +459,40 @@ public class AgentMonteCarlo : MonoBehaviour
         }
         return null;
     }
+    
+    private Cell[][] CopyGrid(Cell[][] grid)
+    {
+        Cell[][] copyGrid = new Cell[grid.Length][];
+        for (int i = 0; i < grid.Length; ++i)
+        {
+            copyGrid[i] = new Cell[grid[0].Length];
+            for (int j = 0; j < grid[0].Length; j++)
+            {
+                copyGrid[i][j] = new Cell {cellTicTacToeType = grid[i][j].cellTicTacToeType};
+            }
+        }
+
+        return copyGrid;
+    }
+
+    
+    #endregion
+    
+    
+    #region UnityUtils
+    
+    private void DebugGrid(Cell[][] grid)
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            string debug = "";
+            for (int j = 0; j < 3; j++)
+            {
+                debug += grid[i][j].cellTicTacToeType + " ";
+            }
+            Debug.Log(debug);
+        }
+    }
+    
+    #endregion
 }
