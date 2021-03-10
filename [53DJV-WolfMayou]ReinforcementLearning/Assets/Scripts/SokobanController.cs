@@ -62,76 +62,67 @@ public class SokobanController : MonoBehaviour
     // Check Collision With Player
     private bool checkCollision(Vector3 currentPosition, Vector3 direction)
     {
-        Vector3 targetPosition = currentPosition + direction;
+        /*Vector3 targetPosition = currentPosition + direction;
         int x = (int)targetPosition.x;
-        int z = (int)targetPosition.z;
+        int z = (int)targetPosition.z;*/
         float maxDistance = 1.0f;
+        RaycastHit hit;
 
-        // If Wall
-        if (grid.grid[z][x].cellSokobanType == Cell.CellSokobanType.Wall)
+        // What we hit
+        if (Physics.Raycast(currentPosition, direction, out hit, maxDistance))
         {
-            Debug.Log("Un mur bloque le chemin pour avancer.");
-            return false;
-        }
+            Debug.Log("Hit Something.");
 
-        // If Crate
-        if (grid.grid[z][x].cellSokobanType == Cell.CellSokobanType.Crate)
-        {
-            Debug.Log("Une caisse est sur le chemin.");
-
-            // Get the crate
-            RaycastHit hit;
-            if (Physics.Raycast(currentPosition, direction, out hit, maxDistance))
+            // If Wall
+            if (hit.collider.gameObject.tag == "Wall")
             {
-                Debug.Log("Caisse hit.");
+                Debug.Log("Un mur bloque le chemin pour avancer.");
+                return false;
+            }
 
-                if (hit.collider.gameObject.tag == "Crate")
+            // If Crate
+            if (hit.collider.gameObject.tag == "Crate")
+            {
+                Debug.Log("Hit a le tag Crate.");
+                GameObject crate = hit.collider.gameObject;
+
+                // Can i move the crate
+                if (Physics.Raycast(crate.transform.position, direction, out hit, maxDistance))
                 {
-                    Debug.Log("Hit a le tag Crate.");
-                    GameObject crate = hit.collider.gameObject;
-
-                    // Can i move the crate
-                    if (Physics.Raycast(crate.transform.position, direction, out hit, maxDistance))
+                    if (hit.collider.gameObject.tag == "Wall")
                     {
-                        if (hit.collider.gameObject.tag == "Wall")
-                        {
-                            Debug.Log("Hit a le tag Wall.");
-                            Debug.Log("Impossible de déplacer la caisse.");
-                            Debug.Log(hit.collider.gameObject);
-                            return false;
-                        }
-                        else
-                        {
-                            Debug.Log("Pas de mur en obstacle je déplace la caisse.");
-                            if ((crate.transform.position += direction).z < grid.gridHeight ||
-                                (crate.transform.position += direction).z > 1 ||
-                                (crate.transform.position += direction).x > 1 ||
-                                (crate.transform.position += direction).x < grid.gridWidth)
-                            {
-                                Debug.Log("Caisse déplacé.");
-                                crate.transform.position += direction;
-                                return true;
-                            }
-                            else
-                            {
-                                Debug.Log("Impossible de déplacer la caisse hors de la carte.");
-                                return false;
-                            }
-                        }
+                        Debug.Log("Hit a le tag Wall.");
+                        Debug.Log("Impossible de déplacer la caisse dans un mur.");
+                        Debug.Log(hit.collider.gameObject);
+                        return false;
                     }
                     else
                     {
-                        Debug.Log("Pas d'obstacle je déplace la caisse.");
-                        crate.transform.position += direction;
-                        return true;
+                        Debug.Log("Pas de mur en obstacle je déplace la caisse.");
+                        if ((crate.transform.position += direction).z < grid.gridHeight ||
+                            (crate.transform.position += direction).z > 1 ||
+                            (crate.transform.position += direction).x > 1 ||
+                            (crate.transform.position += direction).x < grid.gridWidth)
+                        {
+                            Debug.Log("Caisse déplacé.");
+                            crate.transform.position += direction;
+                            return true;
+                        }
+                        else
+                        {
+                            Debug.Log("Impossible de déplacer la caisse hors de la carte.");
+                            return false;
+                        }
                     }
                 }
                 else
                 {
-                    Debug.Log("Hit a pas le tag Crate.");
-                    Debug.Log(hit.collider.gameObject);
+                    Debug.Log("Pas d'obstacle je déplace la caisse.");
+                    crate.transform.position += direction;
+                    return true;
                 }
             }
+
         }
 
         return true;
