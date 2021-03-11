@@ -1744,7 +1744,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerPrefab: {fileID: 3415598520799521712, guid: ecc859db11b83f94b8be612b06e13a93, type: 3}
-  _player: {fileID: 0}
+  player: {fileID: 0}
   grid: {fileID: 616517326}
   downArrow: {fileID: 4139335594525618537, guid: b2ead66f3080fe5489141bbc5d17808b, type: 3}
   upArrow: {fileID: 8579721506763046866, guid: c37cb988d3277b6458e8edc96be08af8, type: 3}
@@ -1829,7 +1829,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   grid: {fileID: 616517326}
   playerPrefab: {fileID: 3415598520799521712, guid: ecc859db11b83f94b8be612b06e13a93, type: 3}
-  _player: {fileID: 0}
+  player: {fileID: 0}
   emptyMaterial: {fileID: 2100000, guid: 022bed50dcdddfb47b806b69420fa848, type: 2}
   wallMaterial: {fileID: 2100000, guid: 34874071311da644e9a944d6f678e9cb, type: 2}
   crateMaterial: {fileID: 2100000, guid: 67792de37872d8640b7b0e15a6a4305a, type: 2}
@@ -1854,6 +1854,9 @@ MonoBehaviour:
   ticTacToeController: {fileID: 616517330}
   debuggerManager: {fileID: 462736663}
   epsilon: 0.5
+  everyVisit: 1
+  onPolicy: 1
+  episodesNumber: 20
 --- !u!1 &635025944
 GameObject:
   m_ObjectHideFlags: 0
@@ -2623,7 +2626,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.28, y: 0.011244439}
   m_AnchorMax: {x: 0.72, y: 0.05551113}
-  m_AnchoredPosition: {x: 0, y: -0.099975586}
+  m_AnchoredPosition: {x: 0, y: -0.1000061}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &779917080
@@ -2907,7 +2910,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 18
+  m_fontSize: 14.1
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -3964,7 +3967,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 18
+  m_fontSize: 16
   m_fontSizeBase: 14
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -4590,7 +4593,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 25
+  m_fontSize: 20.3
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -4803,7 +4806,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 18
+  m_fontSize: 17.2
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -6212,7 +6215,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 18
+  m_fontSize: 15.7
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
