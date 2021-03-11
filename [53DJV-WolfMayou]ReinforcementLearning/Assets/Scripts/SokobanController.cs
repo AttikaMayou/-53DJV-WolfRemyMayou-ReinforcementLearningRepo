@@ -152,12 +152,32 @@ public class SokobanController : MonoBehaviour
             Debug.Log("Un mur bloque le chemin pour avancer.");
             return false;
         }
-
         // If Crate In Target Position
-        if (grid.grid[targetX][targetZ].cellSokobanType == Cell.CellSokobanType.Crate)
+        else if (grid.grid[targetX][targetZ].cellSokobanType == Cell.CellSokobanType.Crate)
         {
-            Debug.Log("Une caisse bloque le chemin pour avancer.");
-            return false;
+            // Check If We Can Move the Crate
+            Vector3 nextTargetPosition = targetPosition + direction;
+            int nextTargetX = (int)nextTargetPosition.x;
+            int nextTargetZ = (int)nextTargetPosition.z;
+
+            // If Wall In Next Target Position
+            if (grid.grid[nextTargetX][nextTargetZ].cellSokobanType == Cell.CellSokobanType.Wall)
+            {
+                Debug.Log("Un mur bloque le chemin pour avancer.");
+                return false;
+            }
+            // If Crate In Next Target Position
+            else if (grid.grid[nextTargetX][nextTargetZ].cellSokobanType == Cell.CellSokobanType.Crate)
+            {
+                Debug.Log("Une caisse bloque le chemin pour avancer.");
+                return false;
+            }
+            // We can move the crate
+            else
+            {
+                MoveCrate(crate, direction);
+                return true;
+            }
         }
 
         return true;
