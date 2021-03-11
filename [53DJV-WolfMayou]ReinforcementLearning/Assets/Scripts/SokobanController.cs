@@ -75,23 +75,6 @@ public class SokobanController : MonoBehaviour
         }
     }
 
-    // Crate hit a target box ?
-    private bool IsCrateHitTargetBox(int x, int z)
-    {
-        /*int x = (int)gameObject.transform.position.x;
-        int z = (int)gameObject.transform.position.z;*/
-        if (grid.grid[x][z].cellSokobanType == Cell.CellSokobanType.CrateTarget)
-        {
-            Debug.Log("La caisse à touché une cible.");
-            // Update Crate Material
-            //gameObject.GetComponent<MeshRenderer>().material = cratePlacedMaterial;
-            _filledTargetBox++;
-            CheckVictory();
-            return true;
-        }
-        return false;
-    }
-
     // Check if all targets boxes have a crate
     private bool CheckVictory()
     {
@@ -116,14 +99,21 @@ public class SokobanController : MonoBehaviour
         return false;
     }
 
-    // Move the crate
-    private void MoveCrate(GameObject crate, Vector3 direction)
+    // Crate hit a target box ?
+    private bool IsCrateHitTargetBox(int x, int z)
     {
-        Debug.Log("Pas d'obstacle je déplace la caisse.");
-        Vector3 currentPosition = crate.transform.position;
-        Vector3 newPosition = currentPosition + direction;
-        crate.transform.position = newPosition;
-        Debug.Log("Vector3 : " + crate.transform.position);
+        /*int x = (int)gameObject.transform.position.x;
+        int z = (int)gameObject.transform.position.z;*/
+        if (grid.grid[x][z].cellSokobanType == Cell.CellSokobanType.CrateTarget)
+        {
+            Debug.Log("La caisse à touché une cible.");
+            // Update Crate Material
+            //gameObject.GetComponent<MeshRenderer>().material = cratePlacedMaterial;
+            _filledTargetBox++;
+            CheckVictory();
+            return true;
+        }
+        return false;
     }
 
     // Check Grid State Collision With Player
@@ -186,6 +176,16 @@ public class SokobanController : MonoBehaviour
         }
 
         return true;
+    }
+
+    // Move the crate
+    private void MoveCrate(GameObject crate, Vector3 direction)
+    {
+        Debug.Log("Pas d'obstacle je déplace la caisse.");
+        Vector3 currentPosition = crate.transform.position;
+        Vector3 newPosition = currentPosition + direction;
+        crate.transform.position = newPosition;
+        Debug.Log("Vector3 : " + crate.transform.position);
     }
 
     // Check Raycast Collision With Player
