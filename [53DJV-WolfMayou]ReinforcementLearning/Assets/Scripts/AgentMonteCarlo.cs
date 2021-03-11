@@ -71,6 +71,7 @@ public class AgentMonteCarlo : MonoBehaviour
         if (!_monteCarloInitialized)
         {
             InitializeMonteCarlo();
+            _monteCarloInitialized = true;
         }
 
         Vector3 mouse = Input.mousePosition;
@@ -96,9 +97,9 @@ public class AgentMonteCarlo : MonoBehaviour
                     _allStates.Add(playedState);
                 }
                 
-                if (!_monteCarloInitialized)
-                {
-                    _monteCarloInitialized = true;
+                /*if (!_monteCarloInitialized)
+                {*/
+                    
                     //MonteCarloPrediction(playedState, episodesNumber, everyVisit, onPolicy);
 
                     //Improvement
@@ -109,7 +110,7 @@ public class AgentMonteCarlo : MonoBehaviour
                         ++security;
                         policyStable = MonteCarloPrediction(playedState,20,true,true);
                     } while (!policyStable && security < 10);
-                }
+                //}
 
                 ticTacToeController.ProcessIntent(playedState.ticTacToePolicy);
             }

@@ -103,9 +103,9 @@ public class SokobanController : MonoBehaviour
     }
 
     // Crate hit a target box ?
-    private bool IsCrateHitTargetBox(int x, int z)
+    public bool IsCrateHitTargetBox(int x, int z, Cell[][] currentGrid)
     {
-        if (grid.grid[x][z].cellSokobanType == Cell.CellSokobanType.CrateTarget)
+        if (currentGrid[x][z].cellSokobanType == Cell.CellSokobanType.CrateTarget)
         {
             Debug.Log("La caisse à touché une cible.");
             _filledTargetBox++;
@@ -117,26 +117,26 @@ public class SokobanController : MonoBehaviour
     }
 
     // Check Grid State Collision With Player
-    private bool checkCollisionWithGridState(Vector3 currentPosition, Vector3 direction)
+    public bool checkCollisionWithGridState(Vector3 currentPosition, Vector3 direction, Cell[][] currentGrid)
     {
         Vector3 targetPosition = currentPosition + direction;
         int targetX = (int)targetPosition.x;
         int targetZ = (int)targetPosition.z;
 
         // If Wall In Target Position
-        if (grid.grid[targetX][targetZ].cellSokobanType == Cell.CellSokobanType.Wall)
+        if (currentGrid[targetX][targetZ].cellSokobanType == Cell.CellSokobanType.Wall)
         {
             Debug.Log("Un mur bloque le chemin pour avancer.");
             return false;
         }
         // If Crate Placed In Target Position
-        else if (grid.grid[targetX][targetZ].cellSokobanType == Cell.CellSokobanType.CratePlaced)
+        else if (currentGrid[targetX][targetZ].cellSokobanType == Cell.CellSokobanType.CratePlaced)
         {
             Debug.Log("Une caisse placé bloque le chemin pour avancer.");
             return false;
         }
         // If Crate In Target Position
-        else if (grid.grid[targetX][targetZ].cellSokobanType == Cell.CellSokobanType.Crate)
+        else if (currentGrid[targetX][targetZ].cellSokobanType == Cell.CellSokobanType.Crate)
         {
             // Check If We Can Move the Crate
             Vector3 nextTargetPosition = targetPosition + direction;
@@ -150,19 +150,19 @@ public class SokobanController : MonoBehaviour
                 return false;
             }
             // If Wall In Next Target Position
-            else if (grid.grid[nextTargetX][nextTargetZ].cellSokobanType == Cell.CellSokobanType.Wall)
+            else if (currentGrid[nextTargetX][nextTargetZ].cellSokobanType == Cell.CellSokobanType.Wall)
             {
                 Debug.Log("Un mur bloque le chemin pour avancer.");
                 return false;
             }
             // If Crate Placed In Next Target Position
-            else if (grid.grid[nextTargetX][nextTargetZ].cellSokobanType == Cell.CellSokobanType.CratePlaced)
+            else if (currentGrid[nextTargetX][nextTargetZ].cellSokobanType == Cell.CellSokobanType.CratePlaced)
             {
                 Debug.Log("Une caisse placé bloque le chemin pour avancer.");
                 return false;
             }
             // If Crate In Next Target Position
-            else if (grid.grid[nextTargetX][nextTargetZ].cellSokobanType == Cell.CellSokobanType.Crate)
+            else if (currentGrid[nextTargetX][nextTargetZ].cellSokobanType == Cell.CellSokobanType.Crate)
             {
                 Debug.Log("Une caisse bloque le chemin pour avancer.");
                 return false;
@@ -171,19 +171,19 @@ public class SokobanController : MonoBehaviour
             else
             {
                 // We Hit Target Box ?
-                if (IsCrateHitTargetBox(nextTargetX, nextTargetZ))
+                if (IsCrateHitTargetBox(nextTargetX, nextTargetZ,grid.grid))
                 {
                     // Update Current Crate Grid
-                    grid.grid[targetX][targetZ].cellSokobanType = Cell.CellSokobanType.Empty;
+                    currentGrid[targetX][targetZ].cellSokobanType = Cell.CellSokobanType.Empty;
                     // Update New Crate Grid
-                    grid.grid[nextTargetX][nextTargetZ].cellSokobanType = Cell.CellSokobanType.CratePlaced;
+                    currentGrid[nextTargetX][nextTargetZ].cellSokobanType = Cell.CellSokobanType.CratePlaced;
                 }
                 else
                 {
                     // Update Current Crate Grid
-                    grid.grid[targetX][targetZ].cellSokobanType = Cell.CellSokobanType.Empty;
+                    currentGrid[targetX][targetZ].cellSokobanType = Cell.CellSokobanType.Empty;
                     // Update New Crate Grid
-                    grid.grid[nextTargetX][nextTargetZ].cellSokobanType = Cell.CellSokobanType.Crate;
+                    currentGrid[nextTargetX][nextTargetZ].cellSokobanType = Cell.CellSokobanType.Crate;
                 }             
                 return true;
             }
@@ -235,7 +235,7 @@ public class SokobanController : MonoBehaviour
 
     public void UpIntent()
     {
-        if (player.transform.position.z < grid.gridHeight - 1 && checkCollisionWithGridState(player.transform.position, Vector3.forward))
+        if (player.transform.position.z < grid.gridHeight - 1 && checkCollisionWithGridState(player.transform.position, Vector3.forward,grid.grid))
         {
             checkCollisionWithRaycast(player.transform.position, Vector3.forward);
             player.transform.position += Vector3.forward;
@@ -246,7 +246,7 @@ public class SokobanController : MonoBehaviour
 
     public void DownIntent()
     {
-        if (player.transform.position.z > 0 && checkCollisionWithGridState(player.transform.position, - Vector3.forward))
+        if (player.transform.position.z > 0 && checkCollisionWithGridState(player.transform.position, - Vector3.forward,grid.grid))
         {
             checkCollisionWithRaycast(player.transform.position, - Vector3.forward);
             player.transform.position -= Vector3.forward;
@@ -257,7 +257,7 @@ public class SokobanController : MonoBehaviour
 
     public void LeftIntent()
     {
-        if (player.transform.position.x > 0 && checkCollisionWithGridState(player.transform.position, Vector3.left))
+        if (player.transform.position.x > 0 && checkCollisionWithGridState(player.transform.position, Vector3.left,grid.grid))
         {
             checkCollisionWithRaycast(player.transform.position, Vector3.left);
             player.transform.position += Vector3.left;           
@@ -268,7 +268,7 @@ public class SokobanController : MonoBehaviour
 
     public void RightIntent()
     {
-        if (player.transform.position.x < grid.gridWidth - 1 && checkCollisionWithGridState(player.transform.position, - Vector3.left))
+        if (player.transform.position.x < grid.gridWidth - 1 && checkCollisionWithGridState(player.transform.position, - Vector3.left,grid.grid))
         {
             checkCollisionWithRaycast(player.transform.position, - Vector3.left);
             player.transform.position -= Vector3.left;
