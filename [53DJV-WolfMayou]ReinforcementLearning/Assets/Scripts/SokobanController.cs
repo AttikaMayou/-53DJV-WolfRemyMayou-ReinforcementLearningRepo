@@ -59,6 +59,7 @@ public class SokobanController : MonoBehaviour
 
     private void Update()
     {
+        if (GameSelector.type != GameSelector.GameType.Sokoban) return;
         if (Input.GetKeyDown(KeyCode.Z))
         {
             UpIntent();
