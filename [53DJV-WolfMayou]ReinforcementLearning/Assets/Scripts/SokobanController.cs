@@ -116,12 +116,27 @@ public class SokobanController : MonoBehaviour
         return false;
     }
 
+    // Move the crate
     private void MoveCrate(GameObject crate, Vector3 direction)
     {
         Debug.Log("Pas d'obstacle je déplace la caisse.");
-        crate.transform.position += direction;
+
+        Vector3 currentPosition = crate.transform.position;
+        Vector3 newPosition = currentPosition + direction;
+        crate.transform.position = newPosition;
         Debug.Log("Vector3 : " + crate.transform.position);
+
         IsCrateHitTargetBox(crate);
+
+        int x = (int)currentPosition.x;
+        int z = (int)currentPosition.z;
+        // Update Current Crate Grid
+        grid.grid[x][z].cellSokobanType = Cell.CellSokobanType.Empty;
+
+        x = (int)newPosition.x;
+        z = (int)newPosition.z;
+        // Update New Crate Grid
+        grid.grid[x][z].cellSokobanType = Cell.CellSokobanType.Crate;
     }
 
     // Check Collision With Player
