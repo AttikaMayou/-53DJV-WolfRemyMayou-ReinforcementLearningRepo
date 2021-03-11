@@ -23,9 +23,9 @@ public class SokobanController : MonoBehaviour
     [SerializeField] public GameObject worldLimit;
 
     private int _playerStrokeNumber;
-    private int _playerStrokeLimitNumber = 10;
     [Header("Game Data")]
-    [SerializeField] public int totalTargetBox;
+    [SerializeField] private int _playerStrokeLimitNumber = 10;
+    public int totalTargetBox;
     private int _filledTargetBox;
     private bool _gameIsFinished;
 
