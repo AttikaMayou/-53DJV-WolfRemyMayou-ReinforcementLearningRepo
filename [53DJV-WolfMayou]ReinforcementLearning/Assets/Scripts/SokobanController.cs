@@ -143,20 +143,20 @@ public class SokobanController : MonoBehaviour
     private bool checkCollisionWithGridState(Vector3 currentPosition, Vector3 direction)
     {
         Vector3 targetPosition = currentPosition + direction;
-        int x = (int)targetPosition.x;
-        int z = (int)targetPosition.z;
+        int targetX = (int)targetPosition.x;
+        int targetZ = (int)targetPosition.z;
 
-        // If Wall
-        if (grid.grid[x][z].cellSokobanType == Cell.CellSokobanType.Wall)
+        // If Wall In Target Position
+        if (grid.grid[targetX][targetZ].cellSokobanType == Cell.CellSokobanType.Wall)
         {
             Debug.Log("Un mur bloque le chemin pour avancer.");
             return false;
         }
 
-        // If Crate
-        if (grid.grid[x][z].cellSokobanType == Cell.CellSokobanType.Crate)
+        // If Crate In Target Position
+        if (grid.grid[targetX][targetZ].cellSokobanType == Cell.CellSokobanType.Crate)
         {
-            Debug.Log("Un mur bloque le chemin pour avancer.");
+            Debug.Log("Une caisse bloque le chemin pour avancer.");
             return false;
         }
 
