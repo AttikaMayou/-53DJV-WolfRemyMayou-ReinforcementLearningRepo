@@ -43,6 +43,7 @@ public class TicTacToeController : MonoBehaviour
     
     public bool ProcessIntent(TicTacToeIntent wantedIntent)
     {
+        Debug.Log("Process intent to " + wantedIntent);
         return Place(circle, GetPositionFromIntent(wantedIntent), circleGridMaterial, Cell.CellTicTacToeType.Circle);
     }
     
