@@ -28,6 +28,7 @@ public class SokobanController : MonoBehaviour
     public int totalTargetBox;
     private int _filledTargetBox;
     private bool _gameIsFinished;
+    private bool _hitTargetBox;
 
     public enum SokobanIntent
     {
@@ -53,6 +54,7 @@ public class SokobanController : MonoBehaviour
         totalTargetBox = 0;
         _filledTargetBox = 0;
         _gameIsFinished = false;
+        _hitTargetBox = false;
     }
 
     private void Update()
@@ -106,6 +108,7 @@ public class SokobanController : MonoBehaviour
         {
             Debug.Log("La caisse à touché une cible.");
             _filledTargetBox++;
+            _hitTargetBox = true;
             CheckVictory();
             return true;
         }
@@ -155,18 +158,11 @@ public class SokobanController : MonoBehaviour
             else
             {
                 // We Hit Target Box ?
-                if (IsCrateHitTargetBox(nextTargetX, nextTargetZ))
-                {
-                    // Update Current Crate Grid
-                    grid.grid[targetX][targetZ].cellSokobanType = Cell.CellSokobanType.Empty;
-                }
-                else
-                {
-                    // Update Current Crate Grid
-                    grid.grid[targetX][targetZ].cellSokobanType = Cell.CellSokobanType.Empty;
-                    // Update New Crate Grid
-                    grid.grid[nextTargetX][nextTargetZ].cellSokobanType = Cell.CellSokobanType.Crate;
-                }      
+                IsCrateHitTargetBox(nextTargetX, nextTargetZ);
+                // Update Current Crate Grid
+                grid.grid[targetX][targetZ].cellSokobanType = Cell.CellSokobanType.Empty;
+                // Update New Crate Grid
+                grid.grid[nextTargetX][nextTargetZ].cellSokobanType = Cell.CellSokobanType.Crate;
                 return true;
             }
         }
@@ -177,12 +173,11 @@ public class SokobanController : MonoBehaviour
     // Crate hit a target box ?
     private void IsCrateHitTargetBox(GameObject gameObject)
     {
-        int x = (int)gameObject.transform.position.x;
-        int z = (int)gameObject.transform.position.z;
-        if (grid.grid[x][z].cellSokobanType == Cell.CellSokobanType.CrateTarget)
+        if (_hitTargetBox)
         {
             // Update Crate Material
             gameObject.GetComponent<MeshRenderer>().material = cratePlacedMaterial;
+            _hitTargetBox = false;
         }
     }
 
