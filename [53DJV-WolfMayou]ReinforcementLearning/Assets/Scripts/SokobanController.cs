@@ -116,6 +116,14 @@ public class SokobanController : MonoBehaviour
         return false;
     }
 
+    private void MoveCrate(GameObject crate, Vector3 direction)
+    {
+        Debug.Log("Pas d'obstacle je déplace la caisse.");
+        crate.transform.position += direction;
+        Debug.Log("Vector3 : " + crate.transform.position);
+        IsCrateHitTargetBox(crate);
+    }
+
     // Check Collision With Player
     private bool checkCollision(Vector3 currentPosition, Vector3 direction)
     {
@@ -158,19 +166,13 @@ public class SokobanController : MonoBehaviour
                     }
                     else
                     {
-                        Debug.Log("Pas d'obstacle je déplace la caisse.");
-                        crate.transform.position += direction;
-                        Debug.Log("Vector3 : " + crate.transform.position);
-                        IsCrateHitTargetBox(crate);
+                        MoveCrate(crate, direction);
                         return true;
                     }
                 }
                 else
                 {
-                    Debug.Log("Pas d'obstacle je déplace la caisse.");
-                    crate.transform.position += direction;
-                    Debug.Log("Vector3 : " + crate.transform.position);
-                    IsCrateHitTargetBox(crate);
+                    MoveCrate(crate, direction);
                     return true;
                 }
             }
