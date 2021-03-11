@@ -76,15 +76,15 @@ public class SokobanController : MonoBehaviour
     }
 
     // Crate hit a target box ?
-    private bool IsCrateHitTargetBox(GameObject gameObject)
+    private bool IsCrateHitTargetBox(int x, int z)
     {
-        int x = (int)gameObject.transform.position.x;
-        int z = (int)gameObject.transform.position.z;
+        /*int x = (int)gameObject.transform.position.x;
+        int z = (int)gameObject.transform.position.z;*/
         if (grid.grid[x][z].cellSokobanType == Cell.CellSokobanType.CrateTarget)
         {
             Debug.Log("La caisse à touché une cible.");
             // Update Crate Material
-            gameObject.GetComponent<MeshRenderer>().material = cratePlacedMaterial;
+            //gameObject.GetComponent<MeshRenderer>().material = cratePlacedMaterial;
             _filledTargetBox++;
             CheckVictory();
             return true;
@@ -120,23 +120,10 @@ public class SokobanController : MonoBehaviour
     private void MoveCrate(GameObject crate, Vector3 direction)
     {
         Debug.Log("Pas d'obstacle je déplace la caisse.");
-
         Vector3 currentPosition = crate.transform.position;
         Vector3 newPosition = currentPosition + direction;
         crate.transform.position = newPosition;
         Debug.Log("Vector3 : " + crate.transform.position);
-
-        IsCrateHitTargetBox(crate);
-
-        int x = (int)currentPosition.x;
-        int z = (int)currentPosition.z;
-        // Update Current Crate Grid
-        grid.grid[x][z].cellSokobanType = Cell.CellSokobanType.Empty;
-
-        x = (int)newPosition.x;
-        z = (int)newPosition.z;
-        // Update New Crate Grid
-        grid.grid[x][z].cellSokobanType = Cell.CellSokobanType.Crate;
     }
 
     // Check Grid State Collision With Player
@@ -160,8 +147,14 @@ public class SokobanController : MonoBehaviour
             int nextTargetX = (int)nextTargetPosition.x;
             int nextTargetZ = (int)nextTargetPosition.z;
 
+            // If Map Limit In Next Target Position
+            if (nextTargetX >= grid.gridHeight || nextTargetX < 0 || nextTargetZ >= grid.gridWidth || nextTargetZ < 0)
+            {
+                Debug.Log("Limite de la carte atteinte.");
+                return false;
+            }
             // If Wall In Next Target Position
-            if (grid.grid[nextTargetX][nextTargetZ].cellSokobanType == Cell.CellSokobanType.Wall)
+            else if (grid.grid[nextTargetX][nextTargetZ].cellSokobanType == Cell.CellSokobanType.Wall)
             {
                 Debug.Log("Un mur bloque le chemin pour avancer.");
                 return false;
@@ -175,10 +168,19 @@ public class SokobanController : MonoBehaviour
             // We can move the crate
             else
             {
-                // Update Current Crate Grid
-                grid.grid[targetX][targetZ].cellSokobanType = Cell.CellSokobanType.Empty;
-                // Update New Crate Grid
-                grid.grid[nextTargetX][nextTargetZ].cellSokobanType = Cell.CellSokobanType.Crate;
+                // We Hit Target Box ?
+                if (IsCrateHitTargetBox(nextTargetX, nextTargetZ))
+                {
+                    // Update Current Crate Grid
+                    grid.grid[targetX][targetZ].cellSokobanType = Cell.CellSokobanType.Empty;
+                }
+                else
+                {
+                    // Update Current Crate Grid
+                    grid.grid[targetX][targetZ].cellSokobanType = Cell.CellSokobanType.Empty;
+                    // Update New Crate Grid
+                    grid.grid[nextTargetX][nextTargetZ].cellSokobanType = Cell.CellSokobanType.Crate;
+                }      
                 return true;
             }
         }
@@ -189,9 +191,6 @@ public class SokobanController : MonoBehaviour
     // Check Raycast Collision With Player
     private bool checkCollisionWithRaycast(Vector3 currentPosition, Vector3 direction)
     {
-        /*Vector3 targetPosition = currentPosition + direction;
-        int x = (int)targetPosition.x;
-        int z = (int)targetPosition.z;*/
         float maxDistance = 1.0f;
         RaycastHit hit;
 
@@ -245,8 +244,9 @@ public class SokobanController : MonoBehaviour
 
     public void UpIntent()
     {
-        if (player.transform.position.z < grid.gridHeight - 1 && checkCollisionWithRaycast(player.transform.position, Vector3.forward))
+        if (player.transform.position.z < grid.gridHeight - 1 && checkCollisionWithGridState(player.transform.position, Vector3.forward))
         {
+            checkCollisionWithRaycast(player.transform.position, Vector3.forward);
             player.transform.position += Vector3.forward;
             _playerStrokeNumber++;
             CheckDefeat();
@@ -255,8 +255,9 @@ public class SokobanController : MonoBehaviour
 
     public void DownIntent()
     {
-        if (player.transform.position.z > 0 && checkCollisionWithRaycast(player.transform.position, - Vector3.forward))
+        if (player.transform.position.z > 0 && checkCollisionWithGridState(player.transform.position, - Vector3.forward))
         {
+            checkCollisionWithRaycast(player.transform.position, - Vector3.forward);
             player.transform.position -= Vector3.forward;
             _playerStrokeNumber++;
             CheckDefeat();
@@ -265,9 +266,10 @@ public class SokobanController : MonoBehaviour
 
     public void LeftIntent()
     {
-        if (player.transform.position.x > 0 && checkCollisionWithRaycast(player.transform.position, Vector3.left))
+        if (player.transform.position.x > 0 && checkCollisionWithGridState(player.transform.position, Vector3.left))
         {
-            player.transform.position += Vector3.left;
+            checkCollisionWithRaycast(player.transform.position, Vector3.left);
+            player.transform.position += Vector3.left;           
             _playerStrokeNumber++;
             CheckDefeat();
         }
@@ -275,8 +277,9 @@ public class SokobanController : MonoBehaviour
 
     public void RightIntent()
     {
-        if (player.transform.position.x < grid.gridWidth - 1 && checkCollisionWithRaycast(player.transform.position, - Vector3.left))
+        if (player.transform.position.x < grid.gridWidth - 1 && checkCollisionWithGridState(player.transform.position, - Vector3.left))
         {
+            checkCollisionWithRaycast(player.transform.position, - Vector3.left);
             player.transform.position -= Vector3.left;
             _playerStrokeNumber++;
             CheckDefeat();
