@@ -102,13 +102,9 @@ public class SokobanController : MonoBehaviour
     // Crate hit a target box ?
     private bool IsCrateHitTargetBox(int x, int z)
     {
-        /*int x = (int)gameObject.transform.position.x;
-        int z = (int)gameObject.transform.position.z;*/
         if (grid.grid[x][z].cellSokobanType == Cell.CellSokobanType.CrateTarget)
         {
             Debug.Log("La caisse à touché une cible.");
-            // Update Crate Material
-            //gameObject.GetComponent<MeshRenderer>().material = cratePlacedMaterial;
             _filledTargetBox++;
             CheckVictory();
             return true;
@@ -178,6 +174,18 @@ public class SokobanController : MonoBehaviour
         return true;
     }
 
+    // Crate hit a target box ?
+    private void IsCrateHitTargetBox(GameObject gameObject)
+    {
+        int x = (int)gameObject.transform.position.x;
+        int z = (int)gameObject.transform.position.z;
+        if (grid.grid[x][z].cellSokobanType == Cell.CellSokobanType.CrateTarget)
+        {
+            // Update Crate Material
+            gameObject.GetComponent<MeshRenderer>().material = cratePlacedMaterial;
+        }
+    }
+
     // Move the crate
     private void MoveCrate(GameObject crate, Vector3 direction)
     {
@@ -189,7 +197,7 @@ public class SokobanController : MonoBehaviour
     }
 
     // Check Raycast Collision With Player
-    private bool checkCollisionWithRaycast(Vector3 currentPosition, Vector3 direction)
+    private void checkCollisionWithRaycast(Vector3 currentPosition, Vector3 direction)
     {
         float maxDistance = 1.0f;
         RaycastHit hit;
@@ -203,7 +211,6 @@ public class SokobanController : MonoBehaviour
             if (hit.collider.gameObject.tag == "Wall")
             {
                 Debug.Log("Un mur bloque le chemin pour avancer.");
-                return false;
             }
 
             // If Crate
@@ -218,28 +225,24 @@ public class SokobanController : MonoBehaviour
                     if (hit.collider.gameObject.tag == "Wall")
                     {
                         Debug.Log("Un mur bloque le chemin pour avancer.");
-                        return false;
                     }
                     else if (hit.collider.gameObject.tag == "Crate")
                     {
                         Debug.Log("Une caisse bloque le chemin pour avancer.");
-                        return false;
                     }
                     else
                     {
                         MoveCrate(crate, direction);
-                        return true;
+                        IsCrateHitTargetBox(crate);
                     }
                 }
                 else
                 {
                     MoveCrate(crate, direction);
-                    return true;
+                    IsCrateHitTargetBox(crate);
                 }
             }
         }
-
-        return true;
     }
 
     public void UpIntent()
