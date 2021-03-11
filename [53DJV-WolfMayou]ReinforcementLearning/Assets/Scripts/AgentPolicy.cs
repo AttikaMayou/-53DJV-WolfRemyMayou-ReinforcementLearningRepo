@@ -157,7 +157,6 @@ public class AgentPolicy : MonoBehaviour
 
         if (!policyStable)
         {
-            Debug.Log("unstable");
             PolicyEvaluation();
         }
 

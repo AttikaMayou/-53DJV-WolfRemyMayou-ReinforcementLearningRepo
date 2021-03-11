@@ -18,8 +18,11 @@ public class AgentMonteCarlo : MonoBehaviour
     private List<SAR> _simulatedSARs;
     [SerializeField] private DebuggerManager debuggerManager;
 
-    public float epsilon = 0.8f;
+    public float epsilon;
     private bool _monteCarloInitialized;
+    public bool everyVisit;
+    public bool onPolicy;
+    public int episodesNumber;
     
     public void LaunchAgent(AgentSelector.AgentType algo)
     {
@@ -67,10 +70,9 @@ public class AgentMonteCarlo : MonoBehaviour
     {
         if (!_monteCarloInitialized)
         {
-            _monteCarloInitialized = true;
             InitializeMonteCarlo();
         }
-        
+
         Vector3 mouse = Input.mousePosition;
         Ray castPoint = Camera.main.ScreenPointToRay(mouse);
         RaycastHit hit;
@@ -79,7 +81,7 @@ public class AgentMonteCarlo : MonoBehaviour
             float x = Mathf.Round(hit.point.x);
             float z = Mathf.Round(hit.point.z);
             
-            if (!ticTacToeController.gameIsOver && ticTacToeController.Place(ticTacToeController.cross, new Vector3(x, 0.5f, z), ticTacToeController.crossGridMaterial, CellType.Cross))
+            if (ticTacToeController.Place(ticTacToeController.cross, new Vector3(x, 0.5f, z), ticTacToeController.crossGridMaterial, CellType.Cross) && !ticTacToeController.gameIsOver)
             {
                 State playedState = GetStateFromGrid(ticTacToeController.grid.grid);
                 
@@ -93,7 +95,21 @@ public class AgentMonteCarlo : MonoBehaviour
                     _allStates.Add(playedState);
                 }
                 
-                MonteCarloPrediction(playedState, 1000, true, true);
+                if (!_monteCarloInitialized)
+                {
+                    _monteCarloInitialized = true;
+            
+                    MonteCarloPrediction(playedState, episodesNumber, everyVisit, onPolicy);
+
+                    //Improvement
+                    int security = 0;
+                    bool policyStable = true;
+                    do
+                    {
+                        ++security;
+                        policyStable = MonteCarloImprovement(playedState);
+                    } while (!policyStable && security < 100);
+                }
 
                 ticTacToeController.ProcessIntent(playedState.ticTacToePolicy);
             }
@@ -172,7 +188,10 @@ public class AgentMonteCarlo : MonoBehaviour
                     state.stateValue = state.returnS / state.nS;
                 }
 
-                currentState.ticTacToePolicy = GetBestIntent(currentState);
+                foreach (var state in _allStates)
+                {
+                    state.ticTacToePolicy = GetBestIntent(state);
+                }
             }
         }
         
@@ -183,7 +202,10 @@ public class AgentMonteCarlo : MonoBehaviour
                 state.stateValue = state.returnS / state.nS;
             }
            
-            currentState.ticTacToePolicy = GetBestIntent(currentState);
+            foreach (var state in _allStates)
+            {
+                state.ticTacToePolicy = GetBestIntent(state);
+            }
             
         }
     }
@@ -230,6 +252,27 @@ public class AgentMonteCarlo : MonoBehaviour
             tmpState = newSar.state;
         } while (!gameOver && security < 100);
     }
+
+    private bool MonteCarloImprovement(State currentState)
+    {
+        bool policyStable = true;
+        foreach (var state in _allStates)
+        {
+            Intent tempPolicy = state.ticTacToePolicy;
+            state.ticTacToePolicy = GetBestIntent(state);
+            if (tempPolicy != state.ticTacToePolicy)
+            {
+                policyStable = false;
+            }
+        }
+
+        if (!policyStable)
+        {
+            MonteCarloPrediction(currentState, episodesNumber, everyVisit, onPolicy);
+        }
+
+        return policyStable;
+    }
     
     private float GetReward(State currentState)
     {
@@ -238,8 +281,8 @@ public class AgentMonteCarlo : MonoBehaviour
             ticTacToeController.CheckVerticalRows(CellType.Circle, currentState.currentGrid) ||
             ticTacToeController.CheckHorizontalRows(CellType.Circle, currentState.currentGrid))
         {
-            reward += 1000;
-        } else if (ticTacToeController.CheckDiagonal(CellType.Cross, currentState.currentGrid) ||
+            reward += 1;
+        } /*else if (ticTacToeController.CheckDiagonal(CellType.Cross, currentState.currentGrid) ||
                     ticTacToeController.CheckVerticalRows(CellType.Cross, currentState.currentGrid) ||
                     ticTacToeController.CheckHorizontalRows(CellType.Cross, currentState.currentGrid))
         {
@@ -266,7 +309,7 @@ public class AgentMonteCarlo : MonoBehaviour
         {
             //Debug.Log("Match nul !!! Bande de nullos hihihih");
             reward -= 500;
-        }
+        }*/
         
         return reward;
     }
