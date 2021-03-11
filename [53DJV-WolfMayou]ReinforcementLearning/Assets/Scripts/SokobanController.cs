@@ -175,7 +175,10 @@ public class SokobanController : MonoBehaviour
             // We can move the crate
             else
             {
-                MoveCrate(crate, direction);
+                // Update Current Crate Grid
+                grid.grid[targetX][targetZ].cellSokobanType = Cell.CellSokobanType.Empty;
+                // Update New Crate Grid
+                grid.grid[nextTargetX][nextTargetZ].cellSokobanType = Cell.CellSokobanType.Crate;
                 return true;
             }
         }
