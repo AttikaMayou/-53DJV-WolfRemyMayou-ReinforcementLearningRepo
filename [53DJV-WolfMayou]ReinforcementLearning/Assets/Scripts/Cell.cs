@@ -26,6 +26,7 @@ public class Cell
         Empty,
         Wall,
         Crate,
+        CratePlaced,
         CrateTarget
     }
 

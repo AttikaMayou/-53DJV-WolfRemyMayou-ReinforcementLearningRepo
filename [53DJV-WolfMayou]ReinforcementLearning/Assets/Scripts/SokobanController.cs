@@ -128,6 +128,12 @@ public class SokobanController : MonoBehaviour
             Debug.Log("Un mur bloque le chemin pour avancer.");
             return false;
         }
+        // If Crate Placed In Target Position
+        else if (grid.grid[targetX][targetZ].cellSokobanType == Cell.CellSokobanType.CratePlaced)
+        {
+            Debug.Log("Une caisse placé bloque le chemin pour avancer.");
+            return false;
+        }
         // If Crate In Target Position
         else if (grid.grid[targetX][targetZ].cellSokobanType == Cell.CellSokobanType.Crate)
         {
@@ -148,6 +154,12 @@ public class SokobanController : MonoBehaviour
                 Debug.Log("Un mur bloque le chemin pour avancer.");
                 return false;
             }
+            // If Crate Placed In Next Target Position
+            else if (grid.grid[nextTargetX][nextTargetZ].cellSokobanType == Cell.CellSokobanType.CratePlaced)
+            {
+                Debug.Log("Une caisse placé bloque le chemin pour avancer.");
+                return false;
+            }
             // If Crate In Next Target Position
             else if (grid.grid[nextTargetX][nextTargetZ].cellSokobanType == Cell.CellSokobanType.Crate)
             {
@@ -158,11 +170,20 @@ public class SokobanController : MonoBehaviour
             else
             {
                 // We Hit Target Box ?
-                IsCrateHitTargetBox(nextTargetX, nextTargetZ);
-                // Update Current Crate Grid
-                grid.grid[targetX][targetZ].cellSokobanType = Cell.CellSokobanType.Empty;
-                // Update New Crate Grid
-                grid.grid[nextTargetX][nextTargetZ].cellSokobanType = Cell.CellSokobanType.Crate;
+                if (IsCrateHitTargetBox(nextTargetX, nextTargetZ))
+                {
+                    // Update Current Crate Grid
+                    grid.grid[targetX][targetZ].cellSokobanType = Cell.CellSokobanType.Empty;
+                    // Update New Crate Grid
+                    grid.grid[nextTargetX][nextTargetZ].cellSokobanType = Cell.CellSokobanType.CratePlaced;
+                }
+                else
+                {
+                    // Update Current Crate Grid
+                    grid.grid[targetX][targetZ].cellSokobanType = Cell.CellSokobanType.Empty;
+                    // Update New Crate Grid
+                    grid.grid[nextTargetX][nextTargetZ].cellSokobanType = Cell.CellSokobanType.Crate;
+                }             
                 return true;
             }
         }
@@ -200,42 +221,13 @@ public class SokobanController : MonoBehaviour
         // What we hit
         if (Physics.Raycast(currentPosition, direction, out hit, maxDistance))
         {
-            Debug.Log("Hit Something.");
-
-            // If Wall
-            if (hit.collider.gameObject.tag == "Wall")
-            {
-                Debug.Log("Un mur bloque le chemin pour avancer.");
-            }
-
             // If Crate
             if (hit.collider.gameObject.tag == "Crate")
             {
                 Debug.Log("Une caisse est touché.");
                 GameObject crate = hit.collider.gameObject;
-
-                // Can i move the crate
-                if (Physics.Raycast(crate.transform.position, direction, out hit, maxDistance))
-                {
-                    if (hit.collider.gameObject.tag == "Wall")
-                    {
-                        Debug.Log("Un mur bloque le chemin pour avancer.");
-                    }
-                    else if (hit.collider.gameObject.tag == "Crate")
-                    {
-                        Debug.Log("Une caisse bloque le chemin pour avancer.");
-                    }
-                    else
-                    {
-                        MoveCrate(crate, direction);
-                        IsCrateHitTargetBox(crate);
-                    }
-                }
-                else
-                {
-                    MoveCrate(crate, direction);
-                    IsCrateHitTargetBox(crate);
-                }
+                MoveCrate(crate, direction);
+                IsCrateHitTargetBox(crate);
             }
         }
     }
