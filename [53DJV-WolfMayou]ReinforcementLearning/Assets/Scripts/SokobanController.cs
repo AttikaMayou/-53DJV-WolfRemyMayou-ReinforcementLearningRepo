@@ -79,7 +79,7 @@ public class SokobanController : MonoBehaviour
     {
         int x = (int)gameObject.transform.position.x;
         int z = (int)gameObject.transform.position.z;
-        if (grid.grid[z][x].cellSokobanType == Cell.CellSokobanType.CrateTarget)
+        if (grid.grid[x][z].cellSokobanType == Cell.CellSokobanType.CrateTarget)
         {
             Debug.Log("La caisse à touché une cible.");
             // Update Crate Material
