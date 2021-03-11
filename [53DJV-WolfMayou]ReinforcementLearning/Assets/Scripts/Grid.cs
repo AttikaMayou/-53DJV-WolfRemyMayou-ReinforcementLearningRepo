@@ -154,7 +154,7 @@ public class Grid : MonoBehaviour
     {
         // Set Player Start
         int x = 0;
-        int z = 0;
+        int z = 3;
         grid[x][z].cellSokobanType = Cell.CellSokobanType.Start;
         sokobanController.player = Instantiate(sokobanController.playerPrefab, startPos + new Vector3(x, 1.0f, z), Quaternion.identity);
         sokobanController.player.transform.SetParent(this.transform);
@@ -185,15 +185,17 @@ public class Grid : MonoBehaviour
     {
         // Set Player Start
         int x = 0;
-        int z = 3;
+        int z = 0;
         grid[x][z].cellSokobanType = Cell.CellSokobanType.Start;
         sokobanController.player = Instantiate(sokobanController.playerPrefab, startPos + new Vector3(x, 1.0f, z), Quaternion.identity);
         sokobanController.player.transform.SetParent(this.transform);
 
         // Set Crates
+        CreateCrate(1, 3);
         CreateCrate(3, 1);
 
         // Set Targets Boxes
+        CreateTargetBox(0, 3);
         CreateTargetBox(3, 3);
 
         // Set Walls
@@ -224,6 +226,7 @@ public class Grid : MonoBehaviour
     {
         grid[x][z].cellSokobanType = Cell.CellSokobanType.CrateTarget;
         grid[x][z].cellObject.GetComponent<MeshRenderer>().material = sokobanController.targetBoxMaterial;
+        // Increase number of target box
         sokobanController.totalTargetBox++;
     }
 

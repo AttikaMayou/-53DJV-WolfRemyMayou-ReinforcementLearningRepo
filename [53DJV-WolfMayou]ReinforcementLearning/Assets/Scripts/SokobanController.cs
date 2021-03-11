@@ -136,6 +136,11 @@ public class SokobanController : MonoBehaviour
                         Debug.Log("Un mur bloque le chemin pour avancer.");
                         return false;
                     }
+                    else if (hit.collider.gameObject.tag == "Crate")
+                    {
+                        Debug.Log("Une caisse bloque le chemin pour avancer.");
+                        return false;
+                    }
                     else
                     {
                         Debug.Log("Pas d'obstacle je déplace la caisse.");
