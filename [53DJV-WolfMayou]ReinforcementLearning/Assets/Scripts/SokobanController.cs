@@ -23,6 +23,7 @@ public class SokobanController : MonoBehaviour
     [SerializeField] public GameObject worldLimit;
 
     private int _playerStrokeNumber;
+    private int _playerStrokeLimitNumber = 10;
     [Header("Game Data")]
     [SerializeField] public int totalTargetBox;
     private int _filledTargetBox;
@@ -92,13 +93,27 @@ public class SokobanController : MonoBehaviour
     }
 
     // Check if all targets boxes have a crate
-    private void CheckVictory()
+    private bool CheckVictory()
     {
-        if (_filledTargetBox == totalTargetBox)
+        if ((_filledTargetBox == totalTargetBox) && !_gameIsFinished)
         {
             Debug.Log("Partie gagnée en " + _playerStrokeNumber + " coups.");
             _gameIsFinished = true;
+            return true;
         }
+        return false;
+    }
+
+    // Check if the stroke limit is reached
+    private bool CheckDefeat()
+    {
+        if ((_playerStrokeNumber == _playerStrokeLimitNumber) && !_gameIsFinished)
+        {
+            Debug.Log("Partie perdue. Limite de coups (" + _playerStrokeLimitNumber + ") atteinte.");
+            _gameIsFinished = true;
+            return true;
+        }
+        return false;
     }
 
     // Check Collision With Player
@@ -170,6 +185,7 @@ public class SokobanController : MonoBehaviour
         {
             player.transform.position += Vector3.forward;
             _playerStrokeNumber++;
+            CheckDefeat();
         }
     }
 
@@ -179,6 +195,7 @@ public class SokobanController : MonoBehaviour
         {
             player.transform.position -= Vector3.forward;
             _playerStrokeNumber++;
+            CheckDefeat();
         }
     }
 
@@ -188,6 +205,7 @@ public class SokobanController : MonoBehaviour
         {
             player.transform.position += Vector3.left;
             _playerStrokeNumber++;
+            CheckDefeat();
         }
     }
 
@@ -197,6 +215,7 @@ public class SokobanController : MonoBehaviour
         {
             player.transform.position -= Vector3.left;
             _playerStrokeNumber++;
+            CheckDefeat();
         }
     }
 }
