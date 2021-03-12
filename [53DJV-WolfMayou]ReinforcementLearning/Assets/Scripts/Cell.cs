@@ -19,8 +19,19 @@ public class Cell
         Cross = 0,
         Circle = 1
     }
-    
+
+    public enum CellSokobanType
+    {
+        Start,
+        Empty,
+        Wall,
+        Crate,
+        CratePlaced,
+        CrateTarget
+    }
+
     public CellTicTacToeType cellTicTacToeType;
     public CellGridWorldType cellGridWorldType;
+    public CellSokobanType cellSokobanType;
     public GameObject cellObject;
 }

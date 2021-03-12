@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class GameSelector : MonoBehaviour
 {
@@ -19,16 +20,16 @@ public class GameSelector : MonoBehaviour
         Sokoban
     }
 
-    private GameType _type;
+    public static GameType type;
     
     public void ChangeGameType(int value)
     {
-        _type = (GameType) value;
+        type = (GameType) value;
     }
     
     public void InitGameGrid()
     {
-        switch (_type)
+        switch (type)
         {
             case GameType.GridWorld:
                 gridWorldController.InitGridWorldGame();
